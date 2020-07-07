@@ -16,7 +16,7 @@ console.log(String.length); // 1
 console.log("".length); // 0
 ```
 
-### 按索引获取字符
+## 按索引获取字符
 
 按索引获取字符串可以获取某个索引上的字符串，索引从 0 开始。
 
