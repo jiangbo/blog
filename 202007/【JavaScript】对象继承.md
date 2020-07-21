@@ -1,4 +1,4 @@
-# 【JavaScript】对象原型
+# 【JavaScript】对象继承
 
 > 以下内容为学习记录，可以参考 [MDN][1] 原文。
 
