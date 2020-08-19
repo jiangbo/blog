@@ -83,12 +83,6 @@ Docker registry 存储 Docker 镜像。Docker Hub 是任何人都可以使用的
 
 ### 容器（CONTAINERS）
 
-A container is a runnable instance of an image. You can create, start, stop, move, or delete a container using the Docker API or CLI. You can connect a container to one or more networks, attach storage to it, or even create a new image based on its current state.
-
-By default, a container is relatively well isolated from other containers and its host machine. You can control how isolated a container’s network, storage, or other underlying subsystems are from other containers or from the host machine.
-
-A container is defined by its image as well as any configuration options you provide to it when you create or start it. When a container is removed, any changes to its state that are not stored in persistent storage disappear.
-
 容器是镜像的运行实例。您可以使用 Docker API 或 CLI 创建，启动，停止，移动或删除容器。您可以将容器连接到一个或多个网络，或者存储，甚至根据其当前状态创建一个新镜像。
 
 默认情况下，容器与其他容器及其主机之间的隔离度相对较高。您可以控制容器的网络，存储或其他基础子系统与其他容器或与主机的隔离程度。
