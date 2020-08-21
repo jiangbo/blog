@@ -36,41 +36,41 @@ Resolving Dependencies
 
 Dependencies Resolved
 
-==============================================================================================================================================================
- Package                                  Arch                             Version                                    Repository                         Size
-==============================================================================================================================================================
+=========================================================================================
+ Package                             Arch        Version             Repository     Size
+=========================================================================================
 Installing:
- yum-utils                                noarch                           1.1.31-54.el7_8                            updates                           122 k
+ yum-utils                           noarch      1.1.31-54.el7_8     updates       122 k
 Installing for dependencies:
- libxml2-python                           x86_64                           2.9.1-6.el7.4                              base                              247 k
- python-chardet                           noarch                           2.2.1-3.el7                                base                              227 k
- python-kitchen                           noarch                           1.1.1-5.el7                                base                              267 k
+ libxml2-python                      x86_64      2.9.1-6.el7.4       base          247 k
+ python-chardet                      noarch      2.2.1-3.el7         base          227 k
+ python-kitchen                      noarch      1.1.1-5.el7         base          267 k
 
 Transaction Summary
-==============================================================================================================================================================
+=================================================================================
 Install  1 Package (+3 Dependent packages)
 
 Total download size: 862 k
 Installed size: 4.3 M
 Downloading packages:
-(1/4): libxml2-python-2.9.1-6.el7.4.x86_64.rpm                                                                                         | 247 kB  00:00:00
-(2/4): python-kitchen-1.1.1-5.el7.noarch.rpm                                                                                           | 267 kB  00:00:00
-(3/4): yum-utils-1.1.31-54.el7_8.noarch.rpm                                                                                            | 122 kB  00:00:00
-(4/4): python-chardet-2.2.1-3.el7.noarch.rpm                                                                                           | 227 kB  00:00:00
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Total                                                                                                                         1.3 MB/s | 862 kB  00:00:00
+(1/4): libxml2-python-2.9.1-6.el7.4.x86_64.rpm            | 247 kB  00:00:00
+(2/4): python-kitchen-1.1.1-5.el7.noarch.rpm              | 267 kB  00:00:00
+(3/4): yum-utils-1.1.31-54.el7_8.noarch.rpm               | 122 kB  00:00:00
+(4/4): python-chardet-2.2.1-3.el7.noarch.rpm              | 227 kB  00:00:00
+---------------------------------------------------------------------------------
+Total                                            1.3 MB/s | 862 kB  00:00:00
 Running transaction check
 Running transaction test
 Transaction test succeeded
 Running transaction
-  Installing : python-chardet-2.2.1-3.el7.noarch                                                                                                          1/4
-  Installing : python-kitchen-1.1.1-5.el7.noarch                                                                                                          2/4
-  Installing : libxml2-python-2.9.1-6.el7.4.x86_64                                                                                                        3/4
-  Installing : yum-utils-1.1.31-54.el7_8.noarch                                                                                                           4/4
-  Verifying  : libxml2-python-2.9.1-6.el7.4.x86_64                                                                                                        1/4
-  Verifying  : python-kitchen-1.1.1-5.el7.noarch                                                                                                          2/4
-  Verifying  : yum-utils-1.1.31-54.el7_8.noarch                                                                                                           3/4
-  Verifying  : python-chardet-2.2.1-3.el7.noarch                                                                                                          4/4
+  Installing : python-chardet-2.2.1-3.el7.noarch            1/4
+  Installing : python-kitchen-1.1.1-5.el7.noarch            2/4
+  Installing : libxml2-python-2.9.1-6.el7.4.x86_64          3/4
+  Installing : yum-utils-1.1.31-54.el7_8.noarch             4/4
+  Verifying  : libxml2-python-2.9.1-6.el7.4.x86_64          1/4
+  Verifying  : python-kitchen-1.1.1-5.el7.noarch            2/4
+  Verifying  : yum-utils-1.1.31-54.el7_8.noarch             3/4
+  Verifying  : python-chardet-2.2.1-3.el7.noarch            4/4
 
 Installed:
   yum-utils.noarch 0:1.1.31-54.el7_8
@@ -104,12 +104,12 @@ Loading mirror speeds from cached hostfile
  * base: mirrors.aliyun.com
  * extras: mirrors.aliyun.com
  * updates: mirrors.aliyun.com
-base                                                                                                                                   | 3.6 kB  00:00:00
-docker-ce-stable                                                                                                                       | 3.5 kB  00:00:00
-extras                                                                                                                                 | 2.9 kB  00:00:00
-updates                                                                                                                                | 2.9 kB  00:00:00
-(1/2): docker-ce-stable/x86_64/updateinfo                                                                                              |   55 B  00:00:00
-(2/2): docker-ce-stable/x86_64/primary_db                                                                                              |  45 kB  00:00:00
+base                                                           | 3.6 kB  00:00:00
+docker-ce-stable                                               | 3.5 kB  00:00:00
+extras                                                         | 2.9 kB  00:00:00
+updates                                                        | 2.9 kB  00:00:00
+(1/2): docker-ce-stable/x86_64/updateinfo                      |   55 B  00:00:00
+(2/2): docker-ce-stable/x86_64/primary_db                      |  45 kB  00:00:00
 Metadata Cache Created
 ```
 
@@ -159,45 +159,43 @@ Resolving Dependencies
 
 Dependencies Resolved
 
-==============================================================================================================================================================
- Package                                   Arch                      Version                                        Repository                           Size
-==============================================================================================================================================================
+===================================================================================================================
+ Package                              Arch           Version                          Repository              Size
+===================================================================================================================
 Installing:
- docker-ce                                 x86_64                    3:19.03.12-3.el7                               docker-ce-stable                     24 M
+ docker-ce                            x86_64         3:19.03.12-3.el7                 docker-ce-stable        24 M
 Installing for dependencies:
- audit-libs-python                         x86_64                    2.8.5-4.el7                                    base                                 76 k
- checkpolicy                               x86_64                    2.5-8.el7                                      base                                295 k
- container-selinux                         noarch                    2:2.119.2-1.911c772.el7_8                      extras                               40 k
- containerd.io                             x86_64                    1.2.13-3.2.el7                                 docker-ce-stable                     25 M
- docker-ce-cli                             x86_64                    1:19.03.12-3.el7                               docker-ce-stable                     38 M
- libcgroup                                 x86_64                    0.41-21.el7                                    base                                 66 k
- libsemanage-python                        x86_64                    2.5-14.el7                                     base                                113 k
- policycoreutils-python                    x86_64                    2.5-34.el7                                     base                                457 k
- python-IPy                                noarch                    0.75-6.el7                                     base                                 32 k
- setools-libs                              x86_64                    3.3.8-4.el7                                    base                                620 k
+ audit-libs-python                    x86_64         2.8.5-4.el7                      base                    76 k
+ checkpolicy                          x86_64         2.5-8.el7                        base                   295 k
+ container-selinux                    noarch         2:2.119.2-1.911c772.el7_8        extras                  40 k
+ containerd.io                        x86_64         1.2.13-3.2.el7                   docker-ce-stable        25 M
+ docker-ce-cli                        x86_64         1:19.03.12-3.el7                 docker-ce-stable        38 M
+ libcgroup                            x86_64         0.41-21.el7                      base                    66 k
+ libsemanage-python                   x86_64         2.5-14.el7                       base                   113 k
+ policycoreutils-python               x86_64         2.5-34.el7                       base                   457 k
+ python-IPy                           noarch         0.75-6.el7                       base                    32 k
+ setools-libs                         x86_64         3.3.8-4.el7                      base                   620 k
 
 Transaction Summary
-==============================================================================================================================================================
+=============================================================================================================
 Install  1 Package (+10 Dependent packages)
 
 Total download size: 89 M
 Installed size: 365 M
 Downloading packages:
-(1/11): audit-libs-python-2.8.5-4.el7.x86_64.rpm                                                                                       |  76 kB  00:00:00
-(2/11): container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm                                                                           |  40 kB  00:00:00
-(3/11): checkpolicy-2.5-8.el7.x86_64.rpm                                                                                               | 295 kB  00:00:00
-warning: /var/cache/yum/x86_64/7/docker-ce-stable/packages/docker-ce-19.03.12-3.el7.x86_64.rpm: Header V4 RSA/SHA512 Signature, key ID 621e9f35: NOKEY:05 ETA
-Public key for docker-ce-19.03.12-3.el7.x86_64.rpm is not installed
-(4/11): docker-ce-19.03.12-3.el7.x86_64.rpm                                                                                            |  24 MB  00:00:04
-(5/11): containerd.io-1.2.13-3.2.el7.x86_64.rpm                                                                                        |  25 MB  00:00:05
-(6/11): libsemanage-python-2.5-14.el7.x86_64.rpm                                                                                       | 113 kB  00:00:00
-(7/11): libcgroup-0.41-21.el7.x86_64.rpm                                                                                               |  66 kB  00:00:00
-(8/11): policycoreutils-python-2.5-34.el7.x86_64.rpm                                                                                   | 457 kB  00:00:00
-(9/11): python-IPy-0.75-6.el7.noarch.rpm                                                                                               |  32 kB  00:00:00
-(10/11): setools-libs-3.3.8-4.el7.x86_64.rpm                                                                                           | 620 kB  00:00:00
-(11/11): docker-ce-cli-19.03.12-3.el7.x86_64.rpm                                                                                       |  38 MB  00:00:15
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-Total                                                                                                                         4.4 MB/s |  89 MB  00:00:20
+(1/11): audit-libs-python-2.8.5-4.el7.x86_64.rpm                                       |  76 kB  00:00:00
+(2/11): container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm                           |  40 kB  00:00:00
+(3/11): checkpolicy-2.5-8.el7.x86_64.rpm                                               | 295 kB  00:00:00
+(4/11): docker-ce-19.03.12-3.el7.x86_64.rpm                                            |  24 MB  00:00:04
+(5/11): containerd.io-1.2.13-3.2.el7.x86_64.rpm                                        |  25 MB  00:00:05
+(6/11): libsemanage-python-2.5-14.el7.x86_64.rpm                                       | 113 kB  00:00:00
+(7/11): libcgroup-0.41-21.el7.x86_64.rpm                                               |  66 kB  00:00:00
+(8/11): policycoreutils-python-2.5-34.el7.x86_64.rpm                                   | 457 kB  00:00:00
+(9/11): python-IPy-0.75-6.el7.noarch.rpm                                               |  32 kB  00:00:00
+(10/11): setools-libs-3.3.8-4.el7.x86_64.rpm                                           | 620 kB  00:00:00
+(11/11): docker-ce-cli-19.03.12-3.el7.x86_64.rpm                                       |  38 MB  00:00:15
+--------------------------------------------------------------------------------------------------------------
+Total                                                                         4.4 MB/s |  89 MB  00:00:20
 Retrieving key from https://mirrors.aliyun.com/docker-ce/linux/centos/gpg
 Importing GPG key 0x621E9F35:
  Userid     : "Docker Release (CE rpm) <docker@docker.com>"
@@ -207,28 +205,28 @@ Running transaction check
 Running transaction test
 Transaction test succeeded
 Running transaction
-  Installing : libcgroup-0.41-21.el7.x86_64                                                                                                              1/11
-  Installing : audit-libs-python-2.8.5-4.el7.x86_64                                                                                                      2/11
-  Installing : setools-libs-3.3.8-4.el7.x86_64                                                                                                           3/11
-  Installing : 1:docker-ce-cli-19.03.12-3.el7.x86_64                                                                                                     4/11
-  Installing : python-IPy-0.75-6.el7.noarch                                                                                                              5/11
-  Installing : libsemanage-python-2.5-14.el7.x86_64                                                                                                      6/11
-  Installing : checkpolicy-2.5-8.el7.x86_64                                                                                                              7/11
-  Installing : policycoreutils-python-2.5-34.el7.x86_64                                                                                                  8/11
-  Installing : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch                                                                                        9/11
-  Installing : containerd.io-1.2.13-3.2.el7.x86_64                                                                                                      10/11
-  Installing : 3:docker-ce-19.03.12-3.el7.x86_64                                                                                                        11/11
-  Verifying  : checkpolicy-2.5-8.el7.x86_64                                                                                                              1/11
-  Verifying  : libsemanage-python-2.5-14.el7.x86_64                                                                                                      2/11
-  Verifying  : containerd.io-1.2.13-3.2.el7.x86_64                                                                                                       3/11
-  Verifying  : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch                                                                                        4/11
-  Verifying  : python-IPy-0.75-6.el7.noarch                                                                                                              5/11
-  Verifying  : policycoreutils-python-2.5-34.el7.x86_64                                                                                                  6/11
-  Verifying  : 1:docker-ce-cli-19.03.12-3.el7.x86_64                                                                                                     7/11
-  Verifying  : 3:docker-ce-19.03.12-3.el7.x86_64                                                                                                         8/11
-  Verifying  : setools-libs-3.3.8-4.el7.x86_64                                                                                                           9/11
-  Verifying  : audit-libs-python-2.8.5-4.el7.x86_64                                                                                                     10/11
-  Verifying  : libcgroup-0.41-21.el7.x86_64                                                                                                             11/11
+  Installing : libcgroup-0.41-21.el7.x86_64                                     1/11
+  Installing : audit-libs-python-2.8.5-4.el7.x86_64                             2/11
+  Installing : setools-libs-3.3.8-4.el7.x86_64                                  3/11
+  Installing : 1:docker-ce-cli-19.03.12-3.el7.x86_64                            4/11
+  Installing : python-IPy-0.75-6.el7.noarch                                     5/11
+  Installing : libsemanage-python-2.5-14.el7.x86_64                             6/11
+  Installing : checkpolicy-2.5-8.el7.x86_64                                     7/11
+  Installing : policycoreutils-python-2.5-34.el7.x86_64                         8/11
+  Installing : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch               9/11
+  Installing : containerd.io-1.2.13-3.2.el7.x86_64                             10/11
+  Installing : 3:docker-ce-19.03.12-3.el7.x86_64                               11/11
+  Verifying  : checkpolicy-2.5-8.el7.x86_64                                     1/11
+  Verifying  : libsemanage-python-2.5-14.el7.x86_64                             2/11
+  Verifying  : containerd.io-1.2.13-3.2.el7.x86_64                              3/11
+  Verifying  : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch               4/11
+  Verifying  : python-IPy-0.75-6.el7.noarch                                     5/11
+  Verifying  : policycoreutils-python-2.5-34.el7.x86_64                         6/11
+  Verifying  : 1:docker-ce-cli-19.03.12-3.el7.x86_64                            7/11
+  Verifying  : 3:docker-ce-19.03.12-3.el7.x86_64                                8/11
+  Verifying  : setools-libs-3.3.8-4.el7.x86_64                                  9/11
+  Verifying  : audit-libs-python-2.8.5-4.el7.x86_64                            10/11
+  Verifying  : libcgroup-0.41-21.el7.x86_64                                    11/11
 
 Installed:
   docker-ce.x86_64 3:19.03.12-3.el7
