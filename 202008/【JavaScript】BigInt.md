@@ -1,4 +1,4 @@
-# 【JavaScript】Number
+# 【JavaScript】BigInt
 
 > 以下内容为学习记录，可以参考 [MDN][1] 原文。
 
