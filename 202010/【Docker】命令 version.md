@@ -16,7 +16,7 @@
 
 ## 命令选项
 
-### -f --format
+### format
 
 根据指定的格式显示输出信息，其中 `-f` 是 `--format` 的短命令形式。一般来说，在命令行手动输入命令时，使用短命令形式，可以减少输入。而长命令的形式，用在编写脚本的文件中，增强可读性。
 
@@ -55,14 +55,14 @@ Server: Docker Engine - Community
   GitCommit:        fec3683
 ```
 
-## 获取版本信息
+### 获取版本信息
 
 ```sh
 $ docker version --format '{{.Server.Version}}'
 19.03.6
 ```
 
-## 输出 json 格式
+### 输出 json 格式
 
 ```sh
 $ docker version --format '{{json .}}'
