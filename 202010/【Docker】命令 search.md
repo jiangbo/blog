@@ -134,22 +134,22 @@ busybox             Busybox base image.   1974                [OK]
 ```sh
 $ docker search busybox  --automated
 Flag --automated has been deprecated, use --filter=is-automated=true instead
-NAME                     DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
-progrium/busybox                                                         71                                      [OK]
-radial/busyboxplus       Full-chain, Internet enabled, busybox made f…   32                                      [OK]
-odise/busybox-curl                                                       4                                       [OK]
-prom/busybox             Prometheus Busybox Docker base images           2                                       [OK]
-ggtools/busybox-ubuntu   Busybox ubuntu version with extra goodies       0                                       [OK]
+NAME                     DESCRIPTION                                     STARS     OFFICIAL    AUTOMATED
+progrium/busybox                                                         71                    [OK]
+radial/busyboxplus       Full-chain, Internet enabled, busybox made f…   32                    [OK]
+odise/busybox-curl                                                       4                     [OK]
+prom/busybox             Prometheus Busybox Docker base images           2                     [OK]
+ggtools/busybox-ubuntu   Busybox ubuntu version with extra goodies       0                     [OK]
 ```
 
 ```sh
 $ docker search busybox  --filter is-automated=true
-NAME                     DESCRIPTION                                     STARS               OFFICIAL            AUTOMATED
-progrium/busybox                                                         71                                      [OK]
-radial/busyboxplus       Full-chain, Internet enabled, busybox made f…   32                                      [OK]
-odise/busybox-curl                                                       4                                       [OK]
-prom/busybox             Prometheus Busybox Docker base images           2                                       [OK]
-ggtools/busybox-ubuntu   Busybox ubuntu version with extra goodies       0                                       [OK]
+NAME                     DESCRIPTION                                     STARS     OFFICIAL    AUTOMATED
+progrium/busybox                                                         71                    [OK]
+radial/busyboxplus       Full-chain, Internet enabled, busybox made f…   32                    [OK]
+odise/busybox-curl                                                       4                     [OK]
+prom/busybox             Prometheus Busybox Docker base images           2                     [OK]
+ggtools/busybox-ubuntu   Busybox ubuntu version with extra goodies       0                     [OK]
 ```
 
 ### 根据官方镜像过滤
