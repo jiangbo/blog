@@ -27,15 +27,15 @@ Registry/<Your Docker ID>/<Repository Name>:<tag>
 
 ### Docker ID 
 
-用户在 docker hub 上的用户名，这个相当于命名空间的概念。
+用户在 docker hub 上的用户名，这个相当于命名空间的概念。如果不写，默认是 docker hub 的 library 命名空间下。
 
 ### Repository
 
-仓库名称，相当于一个项目的概念。
+仓库名称，相当于一个项目的概念，不能省略。
 
 ### tag
 
-类似于版本的概念。
+类似于版本的概念，如果不写，默认为 lastest，即最新。
 
 ## 命令选项
 
