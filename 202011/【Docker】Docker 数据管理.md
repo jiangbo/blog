@@ -1,13 +1,11 @@
-# 【Docker】Docker 访问仓库
+# 【Docker】Docker 数据管理
 
 参考教程：https://yeasy.gitbook.io/docker_practice/introduction
 书籍：《Docker技术入门与实践》
 
-仓库（`Repository`）是集中存放镜像的地方。
-
-一个容易混淆的概念是注册服务器（`Registry`）。实际上注册服务器是管理仓库的具体服务器，每个服务器上可以有多个仓库，而每个仓库下面有多个镜像。从这方面来说，仓库可以被认为是一个具体的项目或目录。例如对于仓库地址 `docker.io/ubuntu` 来说，`docker.io` 是注册服务器地址，`ubuntu` 是仓库名。
-
-大部分时候，并不需要严格区分这两者的概念。
+在容器中管理数据主要有两种方式：
+- 数据卷（Volumes）
+- 挂载主机目录 (Bind mounts)
 
 ## 环境
 
@@ -15,9 +13,51 @@
 2. centos 7.8
 3. docker 19.03
 
-## Docker Hub
+## 数据卷
 
-推送镜像到 Docker Hub。
+`数据卷` 是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：
+- `数据卷` 可以在容器之间共享和重用 
+- 对 `数据卷` 的修改会立马生效  
+- 对 `数据卷` 的更新，不会影响镜像
+- `数据卷` 默认会一直存在，即使容器被删除
+
+> 注意：`数据卷` 的使用，类似于 Linux 下对目录或文件进行 mount，镜像中的被指定为挂载点的目录中的文件会复制到数据卷中（仅数据卷为空时会复制）。
+
+### 创建数据卷
+
+```sh
+$ docker volume create my_volume
+my_volume
+```
+
+### 查看数据卷
+
+```sh
+[node1] (local) root@192.168.0.23 ~
+$ docker volume ls
+DRIVER              VOLUME NAME
+local               my_volume
+```
+
+### 查看数据卷详情
+
+```sh
+[node1] (local) root@192.168.0.23 ~
+$ docker volume inspect my_volume
+[
+    {
+        "CreatedAt": "2020-09-22T11:20:15Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/var/lib/docker/volumes/my_volume/_data",
+        "Name": "my_volume",
+        "Options": {},
+        "Scope": "local"
+    }
+]
+```
+
+创建一个数据卷
 
 ```sh
 [node1] (local) root@192.168.0.18 ~
