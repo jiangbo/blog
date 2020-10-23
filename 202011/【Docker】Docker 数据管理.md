@@ -57,30 +57,129 @@ $ docker volume inspect my_volume
 ]
 ```
 
-创建一个数据卷
+### 启动一个挂载数据卷的容器
 
 ```sh
-[node1] (local) root@192.168.0.18 ~
-$ docker tag busybox jiangbo920827/my_busybox:v1
-[node1] (local) root@192.168.0.18 ~
-$ docker images
-REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
-jiangbo920827/my_busybox   v1                  6858809bf669        10 days ago         1.23MB
-busybox                    latest              6858809bf669        10 days ago         1.23MB
-[node1] (local) root@192.168.0.18 ~
-$ docker login --username jiangbo920827
-Password: 
-WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
-Configure a credential helper to remove this warning. See
-https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+[root@master ~]# docker run -d -P --name web --mount type=volume,source=my-volume,target=/usr/share/nginx/html nginx:alpine
+5fa669ef06ecf858a760ab053bcb2fe804e98df8bd66b7e9dc556d24cc73caf4
+[root@master ~]# docker ps
+CONTAINER ID  IMAGE                           COMMAND               CREATED         STATUS            PORTS                  NAMES
+5fa669ef06ec  docker.io/library/nginx:alpine  nginx -g daemon o...  17 seconds ago  Up 5 seconds ago  0.0.0.0:35727->80/tcp  web
+[root@master ~]# curl localhost:35727
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
 
-Login Succeeded
-[node1] (local) root@192.168.0.18 ~
-$ docker push jiangbo920827/my_busybox:v1
-The push refers to repository [docker.io/jiangbo920827/my_busybox]
-be8b8b42328a: Mounted from library/busybox 
-v1: digest: sha256:2ca5e69e244d2da7368f7088ea3ad0653c3ce7aaccd0b8823d11b0d5de956002 size: 527
-[node1] (local) root@192.168.0.18 ~
+<!DOCTYPE html>
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+### 修改数据卷的内容
+
+```sh
+[root@master ~]# docker volume inspect my-volume
+[
+     {
+          "Name": "my-volume",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/containers/storage/volumes/my-volume/_data",
+          "CreatedAt": "2020-10-23T16:56:50.967850159+08:00",
+          "Labels": {
+
+          },
+          "Scope": "local",
+          "Options": {
+
+          }
+     }
+]
+[root@master ~]# cd /var/lib/containers/storage/volumes/my-volume/_data
+[root@master _data]# ls
+50x.html  index.html
+[root@master _data]# vi index.html
+[root@master _data]# vim index.html
+[root@master _data]# curl localhost:35727
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!Hello world!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+[root@master _data]#
+```
+
+### 删除数据卷
+
+```sh
+[root@master _data]# docker ps
+CONTAINER ID  IMAGE                           COMMAND               CREATED        STATUS            PORTS                  NAMES
+5fa669ef06ec  docker.io/library/nginx:alpine  nginx -g daemon o...  7 minutes ago  Up 6 minutes ago  0.0.0.0:35727->80/tcp  web
+[root@master _data]# docker stop 5f
+5fa669ef06ecf858a760ab053bcb2fe804e98df8bd66b7e9dc556d24cc73caf4
+[root@master ~]# docker rm 5f
+5fa669ef06ecf858a760ab053bcb2fe804e98df8bd66b7e9dc556d24cc73caf4
+[root@master ~]# docker volume rm my-volume
+my-volume
+[root@master ~]#
+```
+
+### 删除所有未使用的数据卷
+
+```sh
+[root@master ~]# docker volume create vol1
+^[[Avol1
+[root@master ~]# docker volume create vol2
+vol2
+[root@master ~]# docker volume create vol3
+vol3
+[root@master ~]# docker volume prune
+WARNING! This will remove all volumes not used by at least one container.
+Are you sure you want to continue? [y/N] y
+ed5e6609ebfce46c374a25067a2b25a1d16a57f833c68126fd5bde5aab9c50f4
+vol1
+vol2
+vol3
+[root@master ~]#
 ```
 
 ## 私有仓库
