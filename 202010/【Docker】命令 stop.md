@@ -38,5 +38,3 @@ CONTAINER ID        IMAGE               COMMAND             CREATED             
 ## 总结
 
 介绍了 stop 命令的使用，可以停止一个正在运行的容器，默认等待 10 秒。
-
-[1]: images/docker-run-nginx.png
