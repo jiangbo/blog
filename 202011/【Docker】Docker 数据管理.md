@@ -182,54 +182,73 @@ vol3
 [root@master ~]#
 ```
 
-## 私有仓库
+## 挂载主机目录
 
-有时候使用 Docker Hub 这样的公共仓库可能不方便，用户可以创建一个本地仓库供私人使用。
+### 挂载一个主机目录作为数据卷
 
-​[`docker-registry`](https://docs.docker.com/registry/) 是官方提供的工具，可以用于构建私有的镜像仓库。本文内容基于 [`docker-registry`](https://github.com/docker/distribution) v2.x 版本。
-
-```sh
-[node1] (local) root@192.168.0.18 ~
-$ docker run -d -p 5000:5000 --restart=always --name registry registry
-Unable to find image 'registry:latest' locally
-latest: Pulling from library/registry
-cbdbe7a5bc2a: Pull complete 
-47112e65547d: Pull complete 
-46bcb632e506: Pull complete 
-c1cc712bcecd: Pull complete 
-3db6272dcbfa: Pull complete 
-Digest: sha256:8be26f81ffea54106bae012c6f349df70f4d5e7e2ec01b143c46e2c03b9e551d
-Status: Downloaded newer image for registry:latest
-4256b6cfdd6daaa74ec055f030eb92432c753e905239dad428f16acbdf589a45
-[node1] (local) root@192.168.0.18 ~
-$ docker tag busybox 127.0.0.1:5000/my_busybox
-[node1] (local) root@192.168.0.18 ~
-$ docker push 127.0.0.1:5000/my_busybox
-The push refers to repository [127.0.0.1:5000/my_busybox]
-be8b8b42328a: Pushed 
-latest: digest: sha256:2ca5e69e244d2da7368f7088ea3ad0653c3ce7aaccd0b8823d11b0d5de956002 size: 527
-[node1] (local) root@192.168.0.18 ~
-$ curl 127.0.0.1:5000/v2/_catalog
-{"repositories":["my_busybox"]}
-[node1] (local) root@192.168.0.18 ~
-```
-
-## Nexus 3
-
-使用 Docker 官方的 Registry 创建的仓库面临一些维护问题。比如某些镜像删除以后空间默认是不会回收的，需要一些命令去回收空间然后重启 Registry 程序。在企业中把内部的一些工具包放入 Nexus 中是比较常见的做法，最新版本 `Nexus3.x` 全面支持 Docker 的私有镜像。所以使用 [`Nexus3.x`](https://www.sonatype.com/nexus/repository-oss/download) 一个软件来管理 `Docker` , `Maven` , `Yum` , `PyPI` 等是一个明智的选择。
+使用 --mount 标记可以指定挂载一个本地主机的目录到容器中去。
 
 ```sh
-$ docker run -d --name nexus3 --restart=always \
-    -p 8081:8081 \
-    --mount src=nexus-data,target=/nexus-data \
-    sonatype/nexus3
+$ docker run -d -P \
+    --name web \
+    # -v /src/webapp:/usr/share/nginx/html \
+    --mount type=bind,source=/src/webapp,target=/usr/share/nginx/html \
+    nginx:alpine
 ```
 
-看到如下的界面，则启动成功：
-![Nexus3][1]
+上面的命令加载主机的 /src/webapp 目录到容器的 /usr/share/nginx/html目录。这个功能在进行测试的时候十分方便，比如用户可以放置一些程序到本地目录中，来查看容器是否正常工作。本地目录的路径必须是绝对路径，以前使用 -v 参数时如果本地目录不存在 Docker 会自动为你创建一个文件夹，现在使用 --mount 参数时如果本地目录不存在，Docker 会报错。
+
+Docker 挂载主机目录的默认权限是 读写，用户也可以通过增加 readonly 指定为只读。
+
+```sh
+$ docker run -d -P \
+    --name web \
+    # -v /src/webapp:/usr/share/nginx/html:ro \
+    --mount type=bind,source=/src/webapp,target=/usr/share/nginx/html,readonly \
+    nginx:alpine
+```
+
+加了 readonly 之后，就挂载为 只读 了。如果你在容器内 /usr/share/nginx/html 目录新建文件，会显示如下错误
+
+```sh
+/usr/share/nginx/html # touch new.txt
+touch: new.txt: Read-only file system
+```
+
+### 查看数据卷的具体信息
+
+```json
+"Mounts": [
+    {
+        "Type": "bind",
+        "Source": "/src/webapp",
+        "Destination": "/usr/share/nginx/html",
+        "Mode": "",
+        "RW": true,
+        "Propagation": "rprivate"
+    }
+]
+```
+
+### 挂载一个本地主机文件作为数据卷
+
+--mount 标记也可以从主机挂载单个文件到容器中
+
+```sh
+$ docker run --rm -it \
+   # -v $HOME/.bash_history:/root/.bash_history \
+   --mount type=bind,source=$HOME/.bash_history,target=/root/.bash_history \
+   ubuntu:18.04 \
+   bash
+
+root@2affd44b4667:/# history
+1  ls
+2  diskutil list
+```
+
+这样就可以记录在容器输入过的命令了。
 
 ## 总结
 
-介绍了公共仓库和私有仓库，都可以用来存储镜像。
+介绍了数据管理的两种类型，一种是通过数据卷的方式，另外一种是通过挂载主机目录或者文件的方式。
 
-[1]: images/nexus3.png
