@@ -432,6 +432,28 @@ CONTAINER ID  IMAGE                           COMMAND               CREATED     
 hello world!
 ```
 
+### 查看数据卷挂载变化
+
+数据卷的实现方式是使用 Linux 的挂载实现的。同时，在使用 commit 创建镜像时，数据卷的内容也不会被提交。
+
+```sh
+[root@master _data]# docker container diff ed
+C /var
+C /var/cache
+C /var/cache/nginx
+A /var/cache/nginx/client_temp
+A /var/cache/nginx/fastcgi_temp
+A /var/cache/nginx/proxy_temp
+A /var/cache/nginx/scgi_temp
+A /var/cache/nginx/uwsgi_temp
+C /run
+A /run/nginx.pid
+C /etc
+C /etc/nginx
+C /etc/nginx/conf.d
+C /etc/nginx/conf.d/default.conf
+```
+
 ## 总结
 
 介绍了数据卷的基础使用，包括增加删除等，使用数据卷存储和共享数据，以及备份和恢复。
