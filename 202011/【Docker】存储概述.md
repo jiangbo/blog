@@ -18,13 +18,13 @@ By default all files created inside a container are stored on a writable contain
 - A container’s writable layer is tightly coupled to the host machine where the container is running. You can’t easily move the data somewhere else.
 - Writing into a container’s writable layer requires a [storage driver](https://docs.docker.com/storage/storagedriver/) to manage the filesystem. The storage driver provides a union filesystem, using the Linux kernel. This extra abstraction reduces performance as compared to using _data volumes_, which write directly to the host filesystem.
 
-- 当该容器不再存在时，数据不会保留。如果另一个进程需要数据，则很难从容器中获取数据。
+- 当该容器不存在时，数据不会保留。如果另一个进程需要数据，则很难从容器中获取数据。
 - 容器的可写层与运行容器的主机紧密耦合。您不能轻松地将数据移动到其他位置。
 - 写入容器的可写层需要[存储驱动](https://docs.docker.com/storage/storagedriver/)来管理文件系统。存储驱动程序使用 Linux 内核提供联合文件系统。与直接写入主机文件系统的数据卷相比，这种额外的抽象降低了性能。
 
 Docker has two options for containers to store files in the host machine, so that the files are persisted even after the container stops: volumes, and bind mounts. If you’re running Docker on Linux you can also use a tmpfs mount. If you’re running Docker on Windows you can also use a named pipe.
 
-Docker 有两个选项用于容器在主机中存储文件，以便于即使在容器停止之后，文件仍可以保留，它们分别是：数据卷和绑定挂载。如果您在 Linux 上运行 Docker，也可以使用 tmpfs 挂载。如果在 Windows 上运行 Docker，也可以使用命名管道。
+Docker 有两个选项用于容器在主机中存储文件，以便于即使在容器停止之后，文件仍可以保留，它们分别是：数据卷（volumes）和绑定挂载（bind mounts）。如果您在 Linux 上运行 Docker，也可以使用 tmpfs 挂载。如果在 Windows 上运行 Docker，也可以使用命名管道。
 
 Keep reading for more information about these two ways of persisting data.
 
@@ -45,11 +45,11 @@ An easy way to visualize the difference among volumes, bind mounts, and tmpfs mo
 - **Volumes** are stored in a part of the host filesystem which is managed by Docker (`/var/lib/docker/volumes/` on Linux). Non-Docker processes should not modify this part of the filesystem. Volumes are the best way to persist data in Docker.
 
 - **数据卷** 存储在由 Docker 管理的主机文件系统上（在 Linux 上是`/var/lib/docker/volumes/`）。非 Docker 进程不应修改这部分的文件系统。数据卷是持久化 Docker 数据的最佳方法。
-    
+  
 - **Bind mounts** may be stored anywhere on the host system. They may even be important system files or directories. Non-Docker processes on the Docker host or a Docker container can modify them at any time.
 
 - **绑定挂载** 可以存储在在主机系统的任意位置。它们甚至可能是重要的系统文件或目录。Docker 主机或 Docker 容器上的非 Docker 进程可随时修改它们。
-    
+  
 - **`tmpfs` mounts** are stored in the host system’s memory only, and are never written to the host system’s filesystem.
 
 - **`tmpfs`** 挂载仅存储在主机系统的内存中，并且永远不会写入主机系统的文件系统。
@@ -72,7 +72,7 @@ A given volume can be mounted into multiple containers simultaneously. When no r
 
 When you mount a volume, it may be **named** or **anonymous**. Anonymous volumes are not given an explicit name when they are first mounted into a container, so Docker gives them a random name that is guaranteed to be unique within a given Docker host. Besides the name, named and anonymous volumes behave in the same ways.
 
-挂载数据卷时，可以命名或匿名。匿名卷是首次装入容器时没有给定名称，因此 Docker 为它们提供了一个随机名称，该名称保证在给定的 Docker 主机中是唯一的。除了名称之外，命名卷和匿名卷的行为方式相同。
+挂载数据卷时，可以命名或匿名。匿名卷是首次挂载到容器时没有给定名称，因此 Docker 为它们提供了一个随机名称，该名称保证在给定的 Docker 主机中是唯一的。除了名称之外，命名卷和匿名卷的行为方式相同。
 
 Volumes also support the use of volume drivers, which allow you to store your data on remote hosts or cloud providers, among other possibilities.
 
@@ -82,7 +82,7 @@ Volumes also support the use of volume drivers, which allow you to store your da
 
 Available since the early days of Docker. Bind mounts have limited functionality compared to volumes. When you use a bind mount, a file or directory on the host machine is mounted into a container. The file or directory is referenced by its full path on the host machine. The file or directory does not need to exist on the Docker host already. It is created on demand if it does not yet exist. Bind mounts are very performant, but they rely on the host machine’s filesystem having a specific directory structure available. If you are developing new Docker applications, consider using named volumes instead. You can’t use Docker CLI commands to directly manage bind mounts.
 
-绑定挂载在 Docker的早期就可用了。与数据卷相比，绑定挂载的功能有限。使用绑定挂载时，主机上的文件或目录将挂载到容器中。文件或目录由其在主机上的完整路径引用。文件或目录不需要已经存在于 Docker 主机上。如果尚不存在，则按需创建它。绑定挂载有很高的性能，但它们依赖于主机的文件系统具有特定的目录结构可用。如果要开发新的 Docker 应用程序，请考虑使用命名卷。不能使用 Docker CLI 命令直接管理绑定挂载。
+绑定挂载在 Docker的早期就可用了。与数据卷相比，绑定挂载的功能有限。使用绑定挂载时，主机上的文件或目录将挂载到容器中。文件或目录由其在主机上的完整路径引用。文件或目录不需要已经存在于 Docker 主机上。如果尚不存在，则按需创建它。绑定挂载有很高的性能，但它们依赖于具有特定的目录结构可用的主机文件系统。如果要开发新的 Docker 应用程序，请考虑使用命名卷。不能使用 Docker CLI 命令直接管理绑定挂载。
 
 > Bind mounts allow access to sensitive files
 >
@@ -106,7 +106,7 @@ named pipes 可用于 Docker 主机和容器之间的通信。常见用例是在
 
 Bind mounts and volumes can both be mounted into containers using the -v or --volume flag, but the syntax for each is slightly different. For tmpfs mounts, you can use the --tmpfs flag. We recommend using the --mount flag for both containers and services, for bind mounts, volumes, or tmpfs mounts, as the syntax is more clear.
 
-绑定挂载和数据卷都可以使用 `-v` 或 `--volume` 标志装入容器中，但它们两个的语法略有不同。对于 tmpfs 挂载，可以使用 `--tmpfs` 标志。对于容器和服务，绑定挂载，数据卷和 tmpfs 挂载，我们建议使用 `--mount` 标志，因为语法更加清晰。
+绑定挂载和数据卷都可以使用 `-v` 或 `--volume` 标志挂载到容器中，但它们两个的语法略有不同。对于 tmpfs 挂载，可以使用 `--tmpfs` 标志。对于容器和服务，绑定挂载，数据卷和 tmpfs 挂载，我们建议使用 `--mount` 标志，因为语法更加清晰。
 
 ## 数据卷的好用例
 
