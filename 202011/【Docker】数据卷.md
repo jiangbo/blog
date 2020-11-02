@@ -317,6 +317,121 @@ hello world
 hello world
 ```
 
+## 数据卷的备份和恢复
+
+### 生成数据卷
+
+```sh
+[root@master ~]# docker run -P -d --mount type=volume,src=nginx-volume,dst=/usr/share/nginx/html nginx:alpine
+6264f7e1c20b4799845ef809fb7e065febccb25e0b75d7cfc2c32b78b76a8980
+[root@master ~]# docker ps
+CONTAINER ID  IMAGE                           COMMAND               CREATED         STATUS            PORTS                  NAMES
+6264f7e1c20b  docker.io/library/nginx:alpine  nginx -g daemon o...  22 seconds ago  Up 5 seconds ago  0.0.0.0:44425->80/tcp  objective_johnson
+```
+
+### 修改挂载内容
+
+```sh
+[root@master ~]# docker exec -it 626 /bin/sh
+/ # ls
+bin                   etc                   mnt                   run                   tmp
+dev                   home                  opt                   sbin                  usr
+docker-entrypoint.d   lib                   proc                  srv                   var
+docker-entrypoint.sh  media                 root                  sys
+/ # ll
+/bin/sh: ll: not found
+/ # cd usr/share/nginx/html/
+/usr/share/nginx/html # ll
+/bin/sh: ll: not found
+/usr/share/nginx/html # ls
+50x.html    index.html
+/usr/share/nginx/html # echo "hello world!" > index.html
+/usr/share/nginx/html # exit
+[root@master ~]# curl localhost:44425
+hello world!
+```
+
+### 查看数据卷位置
+
+```sh
+[root@master ~]# docker volume ls
+dockeDRIVER   VOLUME NAME
+local    nginx-volume
+[root@master ~]# docker volume inspect nginx-volume
+[
+     {
+          "Name": "nginx-volume",
+          "Driver": "local",
+          "Mountpoint": "/var/lib/containers/storage/volumes/nginx-volume/_data",
+          "CreatedAt": "2020-11-02T12:11:26.383688716+08:00",
+          "Labels": {
+
+          },
+          "Scope": "local",
+          "Options": {
+
+          }
+     }
+]
+[root@master ~]# cd /var/lib/containers/storage/volumes/
+```
+
+### 备份数据卷
+
+```sh
+[root@master volumes]# tar -zcvf nginx-volume.tar.gz nginx-volume
+nginx-volume/
+nginx-volume/_data/
+nginx-volume/_data/50x.html
+nginx-volume/_data/index.html
+[root@master volumes]# mv nginx-volume.tar.gz ~
+```
+
+### 删除数据卷
+
+```sh
+[root@master volumes]# docker ps
+CONTAINER ID  IMAGE                           COMMAND               CREATED        STATUS            PORTS                  NAMES
+6264f7e1c20b  docker.io/library/nginx:alpine  nginx -g daemon o...  3 minutes ago  Up 3 minutes ago  0.0.0.0:44425->80/tcp  objective_johnson
+[root@master volumes]# docker stop 626
+6264f7e1c20b4799845ef809fb7e065febccb25e0b75d7cfc2c32b78b76a8980
+[root@master volumes]# docker container prune
+6264f7e1c20b4799845ef809fb7e065febccb25e0b75d7cfc2c32b78b76a8980
+[root@master volumes]# docker volume ls
+DRIVER   VOLUME NAME
+local    nginx-volume
+[root@master volumes]# docker volume rm nginx-volume
+nginx-volume
+```
+
+### 启动新容器
+
+```sh
+[root@master volumes]# docker run -P -d --name web --mount type=volume,src=nginx-volume,dst=/usr/share/nginx/html nginx:alpine
+
+8f5b867e5f937c84729f09031a1d44e1d1e36599ee25262775113a2e9da3c4b5
+[root@master volumes]# ls
+nginx-volume
+[root@master volumes]# tar -zxvf ~/nginx-volume.tar.gz
+nginx-volume/
+nginx-volume/_data/
+nginx-volume/_data/50x.html
+nginx-volume/_data/index.html
+[root@master volumes]# ll
+total 0
+drwx------. 3 root root 19 Nov  2 12:11 nginx-volume
+```
+
+### 验证还原效果
+
+```sh
+[root@master volumes]# docker ps
+CONTAINER ID  IMAGE                           COMMAND               CREATED             STATUS                 PORTS                  NAMES
+8f5b867e5f93  docker.io/library/nginx:alpine  nginx -g daemon o...  About a minute ago  Up About a minute ago  0.0.0.0:36962->80/tcp  web
+[root@master volumes]# curl localhost:36962
+hello world!
+```
+
 ## 总结
 
-介绍了数据卷的基础使用，包括增加删除等，使用数据卷存储和共享数据。
+介绍了数据卷的基础使用，包括增加删除等，使用数据卷存储和共享数据，以及备份和恢复。
