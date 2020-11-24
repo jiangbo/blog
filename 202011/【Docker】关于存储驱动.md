@@ -1,4 +1,4 @@
-# 【Docker】存储驱动
+# 【Docker】关于存储驱动
 
 参考教程：https://docs.docker.com/storage/storagedriver/
 以下内容来自官方文档翻译
@@ -121,7 +121,7 @@ Copy-on-write is a strategy of sharing and copying files for maximum efficiency.
 
 When you use `docker pull` to pull down an image from a repository, or when you create a container from an image that does not yet exist locally, each layer is pulled down separately, and stored in Docker’s local storage area, which is usually `/var/lib/docker/` on Linux hosts. You can see these layers being pulled in this example:
 
-当您使用 `docker pull` 来从存储库中拉取镜像时，或者当您从本地尚不存在的镜像中创建容器时，每一层都会被分别拉取，并存储在 Docker 的本地存储区域中，通常 Linux 主机上的 `/var/lib/docker/`。 您可以在此示例中看到这些层被拉取：
+当您使用 `docker pull` 来从存储库中拉取镜像时，或者当您从本地尚不存在的镜像中创建容器时，每一层都会被分别拉取，并存储在 Docker 的本地存储区域中，通常在 Linux 主机上的 `/var/lib/docker/`。 您可以在此示例中看到这些层被拉取：
 
 ```sh
 [root@master ~]# docker pull ubuntu:18.04
@@ -170,7 +170,7 @@ The directory names do not correspond to the layer IDs (this has been true since
 
 Now imagine that you have two different Dockerfiles. You use the first one to create an image called `acme/my-base-image:1.0`.
 
-现在，假设您有两个不同的 Dockerfile。您使用第一个创建一个名为 `acme/ my-base-image:1.0` 的镜像。
+现在，假设您有两个不同的 Dockerfile。您使用第一个创建一个名为 `acme/my-base-image:1.0` 的镜像。
 
 ```Dockerfile
 FROM ubuntu:18.04
@@ -282,7 +282,7 @@ When an existing file in a container is modified, the storage driver performs a 
 
 - Any modifications are made to this copy of the file, and the container cannot see the read-only copy of the file that exists in the lower layer.
 
-- 对该文件的副本进行了任何修改，并且容器看不到存在于较低层中的文件的只读副本。
+- 只要对该文件的副本进行了任何修改，容器就看不到存在于较低层中的文件的只读副本。
 
 Btrfs, ZFS, and other drivers handle the copy-on-write differently. You can read more about the methods of these drivers later in their detailed descriptions.
 
