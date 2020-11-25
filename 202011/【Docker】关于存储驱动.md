@@ -260,7 +260,7 @@ Notice that all the layers are identical except the top layer of the second imag
 
 > **Note**: The `<missing>` lines in the `docker history` output indicate that those layers were built on another system and are not available locally. This can be ignored.
 
-> **注意**：“ docker history”输出中的“ <missing>”行表示这些层是在另一个系统上构建的，并且在本地不可用。这可以忽略。
+> **注意**：“ docker history”输出中的 `<missing>` 行表示这些层是在另一个系统上构建的，并且在本地不可用。这可以忽略。
 
 ### 复制使容器高效
 
@@ -274,7 +274,7 @@ When an existing file in a container is modified, the storage driver performs a 
 
 - Search through the image layers for the file to update. The process starts at the newest layer and works down to the base layer one layer at a time. When results are found, they are added to a cache to speed future operations.
 
-- 在镜像图层中搜索要更新的文件。该过程从最新层开始，一次向下一层到基础层。找到结果后，会将它们添加到缓存中以加快将来的操作。
+- 在镜像图层中搜索要更新的文件。该过程从最新层开始，依次向下一层到基础层。找到结果后，会将它们添加到缓存中以加快将来的操作。
 
 - Perform a `copy_up` operation on the first copy of the file that is found, to copy the file to the container’s writable layer.
 

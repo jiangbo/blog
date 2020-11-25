@@ -82,7 +82,7 @@ Volumes also support the use of volume drivers, which allow you to store your da
 
 Available since the early days of Docker. Bind mounts have limited functionality compared to volumes. When you use a bind mount, a file or directory on the host machine is mounted into a container. The file or directory is referenced by its full path on the host machine. The file or directory does not need to exist on the Docker host already. It is created on demand if it does not yet exist. Bind mounts are very performant, but they rely on the host machine’s filesystem having a specific directory structure available. If you are developing new Docker applications, consider using named volumes instead. You can’t use Docker CLI commands to directly manage bind mounts.
 
-绑定挂载在 Docker的早期就可用了。与数据卷相比，绑定挂载的功能有限。使用绑定挂载时，主机上的文件或目录将挂载到容器中。文件或目录由其在主机上的完整路径引用。文件或目录不需要已经存在于 Docker 主机上。如果尚不存在，则按需创建它。绑定挂载有很高的性能，但它们依赖于具有特定的目录结构可用的主机文件系统。如果要开发新的 Docker 应用程序，请考虑使用命名卷。不能使用 Docker CLI 命令直接管理绑定挂载。
+绑定挂载在 Docker 的早期就可用了。与数据卷相比，绑定挂载的功能有限。使用绑定挂载时，主机上的文件或目录将挂载到容器中。文件或目录由其在主机上的完整路径引用。文件或目录不需要已经存在于 Docker 主机上。如果尚不存在，则按需创建它。绑定挂载有很高的性能，但它们依赖于具有特定的目录结构可用的主机文件系统。如果要开发新的 Docker 应用程序，请考虑使用命名卷。不能使用 Docker CLI 命令直接管理绑定挂载。
 
 > Bind mounts allow access to sensitive files
 >
@@ -116,11 +116,11 @@ Volumes are the preferred way to persist data in Docker containers and services.
 
 - Sharing data among multiple  runningcontainers. If you don’t explicitly create it, a volume is created the first time it is mounted into a container. When that container stops or is removed, the volume still exists. Multiple containers can mount the same volume simultaneously, either read-write or read-only. Volumes are only removed when you explicitly remove them.
 
-- 在多个正在运行的容器之间共享数据。如果未显式创建它，则在首次将卷装入容器时将创建数据卷。当该容器停止或删除时，卷仍然存在。多个容器可以同时挂载同一卷，无论是读写还是只读。仅当您显式删除卷时，才删除它们。
+- 在多个正在运行的容器之间共享数据。如果未显式创建它，则在首次将数据卷挂载到容器时创建数据卷。当该容器停止或删除时，卷仍然存在。多个容器可以同时挂载同一个数据卷，无论是读写还是只读。仅当您显式删除卷时，才删除它们。
 
 - When the Docker host is not guaranteed to have a given directory or file structure. Volumes help you decouple the configuration of the Docker host from the container runtime.
 
-- 当 Docker 主机不能保证具有给定的目录或文件结构时。卷可帮助您将 Docker 主机的配置与容器运行时分离。
+- 当 Docker 主机不能保证具有给定的目录或文件结构时。数据卷可帮助您将 Docker 主机的配置与容器运行时分离。
 
 - When you want to store your container’s data on a remote host or a cloud provider, rather than locally.
 
@@ -128,7 +128,7 @@ Volumes are the preferred way to persist data in Docker containers and services.
 
 - When you need to back up, restore, or migrate data from one Docker host to another, volumes are a better choice. You can stop containers using the volume, then back up the volume’s directory (such as `/var/lib/docker/volumes/<volume-name>`).
 
-- 当您需要备份、还原或将数据从一个 Docker 主机迁移到另一个主机时，卷是更好的选择。您可以使用卷停止容器，然后备份卷的目录（如 `/var/lib/docker/volumes/<volume-name>`）。
+- 当您需要备份、还原或将数据从一个 Docker 主机迁移到另一个主机时，卷是更好的选择。您可以停止使用数据卷的容器，然后备份数据卷的目录（如 `/var/lib/docker/volumes/<volume-name>`）。
 
 - When your application requires high-performance I/O on Docker Desktop. Volumes are stored in the Linux VM rather than the host, which means that the reads and writes have much lower latency and higher throughput.
 
@@ -154,7 +154,7 @@ In general, you should use volumes where possible. Bind mounts are appropriate f
 
     If you use Docker for development this way, your production Dockerfile would copy the production-ready artifacts directly into the image, rather than relying on a bind mount.
 
-    如果使用 Docker 进行这种开发，则生产环境的 Dockerfile 应该将生产就绪工件直接复制到映像中，而不是依赖于绑定挂载。
+    如果使用 Docker 进行这种开发，则生产环境的 Dockerfile 应该将生产就绪工件直接复制到镜像中，而不是依赖于绑定挂载。
 
 - When the file or directory structure of the Docker host is guaranteed to be consistent with the bind mounts the containers require.
 
@@ -178,7 +178,7 @@ If you use either bind mounts or volumes, keep the following in mind:
 
 - If you mount a **bind mount or non-empty volume** into a directory in the container in which some files or directories exist, these files or directories are obscured by the mount, just as if you saved files into `/mnt` on a Linux host and then mounted a USB drive into `/mnt`. The contents of `/mnt` would be obscured by the contents of the USB drive until the USB drive were unmounted. The obscured files are not removed or altered, but are not accessible while the bind mount or volume is mounted.
 
-- 如果使用**绑定挂载或者非空数据卷**到容器中存在某些文件或目录的目录中，则这些文件或目录会被挂载所遮盖，就像将文件保存在 Linux 主机上，然后将 USB 驱动器挂载到 中一样。在 USB 驱动器卸载之前，其内容将被 USB 驱动器的内容遮盖。模糊的文件不会删除或更改，但在挂载绑定挂载或卷时无法访问。
+- 如果使用**绑定挂载或者非空数据卷**到容器中存在某些文件或目录的目录中，则这些文件或目录会被挂载所遮盖，就像将文件保存在 Linux 主机上，然后将 USB 驱动器挂载到 中一样。在 USB 驱动器卸载之前，其内容将被 USB 驱动器的内容遮盖。模糊的文件不会删除或更改，但在挂载绑定挂载或有数据卷时无法访问。
 
 ## 总结
 
