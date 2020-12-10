@@ -12,7 +12,7 @@
 
 ADD has two forms:
 
-ADD有两种形式：
+ADD 有两种形式：
 
 ```Dockerfile
 ADD [--chown=<user>:<group>] <src>... <dest>
