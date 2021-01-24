@@ -76,8 +76,6 @@ dashboard-metrics-scraper-79c5968bdc-7j884   1/1     Running   0          28s   
 kubernetes-dashboard-57f7c84cfc-xhmjx        1/1     Running   0          28s   10.244.1.7   node1   <none>           <none>
 ```
 
-查看 kubernetes-dashboard 在哪个节点上，这里在 node1 上，node1 的 IP 地址是 192.168.56.102，之后浏览器将访问这个地址。
-
 ### 分配权限
 
 ```sh
@@ -90,7 +88,7 @@ dashboard-admin.yaml 的内容见附录。
 
 ### 跳过登录
 
-打开浏览器，输入地址：https://192.168.56.102:32100/#/login ，会看到浏览器提示不安全，是因为证书是我们自己生成的，忽略。
+打开浏览器，输入地址：https://192.168.56.101:32100/#/login ，会看到浏览器提示不安全，是因为证书是我们自己生成的，忽略。
 打开后，看到如下的界面，点击跳过登录，直接查看集群信息：
 ![kubernetes-login.png][1]
 
@@ -98,6 +96,14 @@ dashboard-admin.yaml 的内容见附录。
 
 打开主界面，在左侧导航栏，找到 Nodes，表示节点信息。点击后应该可以看到三台物理机的信息，包括 CPU 和内存等。
 ![nodes-info][2]
+
+### 设置默认命名空间
+
+如果命名空间被修改了，使用下面的命令修改命名空间。
+
+```sh
+kubectl config set-context  --current --namespace=default
+```
 
 ## 总结
 
