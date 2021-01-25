@@ -78,6 +78,12 @@ pod-yaml   1/1     Running   0          53s   10.244.1.6   node1   <none>       
 pod-yaml 1.0.1[root@master pod]#
 ```
 
+### 删除 Pod
+
+```sh
+kubectl delete -f pod.yaml
+```
+
 ## 总结
 
 介绍了创建一个最简单的 Pod，并使用之前创建的镜像来启动服务。
