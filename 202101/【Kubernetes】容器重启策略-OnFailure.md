@@ -7,7 +7,7 @@
 
 ## 目标
 
-创建一个 Pod 将其容器的重启策略设置为：OnFailur，查看容器停止时，Pod 的行为。
+创建一个 Pod 将其容器的重启策略设置为：OnFailure，查看容器停止时，Pod 的行为。
 
 ## pod.yaml
 
@@ -20,7 +20,7 @@ metadata:
   name: pod-demo
 
 spec:
-  restartPolicy: OnFailur
+  restartPolicy: OnFailure
   containers:
     - name: pod-demo
       image: jiangbo920827/spring-demo:actuator
@@ -67,7 +67,7 @@ pod-demo   0/1     Completed   1          4m50s   10.244.1.18   node1   <none>  
 
 ## 总结
 
-介绍了容器的重启策略-OnFailur，在创建单个 Pod 的情况下，只有 Pod 在非正常情况下停止，才会重启。
+介绍了容器的重启策略-OnFailure，在创建单个 Pod 的情况下，只有 Pod 在非正常情况下停止，才会重启。
 容器的重启有一个回退策略，并以指数级增加。如果在 10 分钟没有错误，则重置重启计时。
 详细说明见附录摘抄的官网说明。
 
@@ -75,8 +75,6 @@ pod-demo   0/1     Completed   1          4m50s   10.244.1.18   node1   <none>  
 
 ### Container restart policy
 
-```markdown
 The `spec` of a Pod has a `restartPolicy` field with possible values Always, OnFailure, and Never. The default value is Always.
 
 The `restartPolicy` applies to all containers in the Pod. `restartPolicy` only refers to restarts of the containers by the kubelet on the same node. After containers in a Pod exit, the kubelet restarts them with an exponential back-off delay (10s, 20s, 40s, …), that is capped at five minutes. Once a container has executed for 10 minutes without any problems, the kubelet resets the restart backoff timer for that container.
-```
