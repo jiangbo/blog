@@ -24,8 +24,6 @@ svc-demo     ClusterIP   10.106.217.209   <none>        8080/TCP   40m
 原因是因为安装了 k8s 这三台服务器，具有路由转发规则，如果是集群内部的 IP，
 会被转发到 k8s 的内部，所以才能访问。如果我在宿主机上进行访问，那么是访问不到的。
 
-> 也不要去 ping Service 的 IP，这不是一台真正的服务器，它不会响应你的。
-
 ## NodePort
 
 Service 除了默认的 ClusterIP（不写）外，接下来介绍另外一种类型：NodePort。
