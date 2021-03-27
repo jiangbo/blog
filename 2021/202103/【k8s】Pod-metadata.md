@@ -1,4 +1,4 @@
-# 【k8s】Container-readinessProbe
+# 【k8s】Pod-metadata
 
 ## 环境
 
@@ -61,7 +61,7 @@ metadata:
 ```
 
 其中的 annotations 在之前已经学习过，creationTimestamp 表示创建时间，没有加时区。
-name 时我们自定义的 Pod 的名称，namespace 为命名空间，之后学习。
+name 是我们自定义的 Pod 的名称，namespace 为命名空间，之后学习。
 resourceVersion 表示内部使用的资源版本，uid 系统生成的资源的唯一值。
 其中 name 和 uid 的区别是：name 在同一命名空间下，同种资源唯一，而 uid 全局唯一。
 
