@@ -1,4 +1,4 @@
-# 【k8s】Container-hostPort
+# 【k8s】Container-hostIP
 
 ## 环境
 
