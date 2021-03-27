@@ -1,4 +1,4 @@
-# 【k8s】livenessProbe-successThreshold
+# 【k8s】livenessProbe-timeoutSeconds
 
 ## 环境
 
