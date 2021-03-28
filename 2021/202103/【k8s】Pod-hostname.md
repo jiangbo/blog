@@ -7,7 +7,7 @@
 
 ## 目标
 
-hostname 可以设置指定主机的名称。
+hostname 可以指定主机的名称。
 
 ## 示例
 
@@ -41,6 +41,6 @@ spring-boot-kubernetes
 
 ## 总结
 
-hostname 可以设置指定主机的名称。
+hostname 可以指定主机的名称。
 
 ## 附录
