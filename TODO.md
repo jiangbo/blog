@@ -8,3 +8,5 @@
 8. preemptionPolicy
 9. readinessGates
 10. runtimeClassName
+11. affinity
+12. initContainers

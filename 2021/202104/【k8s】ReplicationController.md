@@ -44,6 +44,7 @@ pod/spring-k8s-blhqk   1/1     Running   0          33m
 ```
 
 查看 ReplicationController 的时候，可以看到需要的副本数，当前的副本数，以及有几个准备完成。
+当 Pod 被删除了，ReplicationController 会自动重新启动一个新 Pod 来代替，让副本数保持不变。
 
 ### 查看 Pod
 
