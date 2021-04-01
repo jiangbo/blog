@@ -8,6 +8,7 @@
 ## 目标
 
 deploy 升级过程中的最大时间由 progressDeadlineSeconds 来定义。
+如果升级过程被暂停了，该时间也会同步暂停，时间不会一直增长。
 
 ## 示例
 

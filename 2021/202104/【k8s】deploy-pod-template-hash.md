@@ -106,6 +106,6 @@ Containers:
 
 ## 总结
 
-查看 Deployment 中的一些字段。
+介绍了 pod-template-hash 标签的作用。
 
 ## 附录

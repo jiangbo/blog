@@ -77,7 +77,7 @@ Events:
 ```
 
 Name，Selector 等字段都已经很熟悉了；Replicas 字段和之前的有点不一样，加入了状态。
-升级相关的字段之后学习；Pod Templat 字段里的都学习过；Conditions 后面学习。
+升级相关的字段之后学习；Pod Template 字段里的都学习过；Conditions 后面学习。
 
 ## 总结
 
