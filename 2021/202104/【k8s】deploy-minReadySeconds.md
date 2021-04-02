@@ -7,8 +7,8 @@
 
 ## 目标
 
-deploy 在更新过程中，启动 Pod 后，minReadySeconds 可用定义该 Pod 经过多少秒后才被视为可用。
-如果新的 Pod 不可用，是不会替换旧的，直接新的可用为止。
+deploy 在更新过程中，启动 Pod 后，minReadySeconds 可以定义该 Pod 经过多少秒后才被视为可用。
+如果新的 Pod 不可用，是不会替换旧的，直到新的可用为止。
 
 ## 示例
 
