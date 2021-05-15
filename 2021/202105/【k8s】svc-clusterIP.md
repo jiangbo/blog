@@ -7,7 +7,7 @@
 
 ## 目标
 
-Service 的 clusterIP 字段表示服务的集群 IP 地址，如果没有自定，会自动生成一个。
+Service 的 clusterIP 字段表示服务的集群 IP 地址，如果没有指定，会自动生成一个。
 如果指定了，并且是合法的集群 IP 地址，它将会被 Service 使用。
 
 ## 示例
