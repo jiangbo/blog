@@ -1,5 +1,5 @@
-1. env -> configMap
-2. env -> secret
+1. mount -> configMap
+2. mount -> secret
 3. securityContext
 4. volumeDevices
 5. volumeMounts
