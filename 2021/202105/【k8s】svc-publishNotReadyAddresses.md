@@ -94,6 +94,7 @@ metadata:
 spec:
   selector:
     app: spring-k8s
+  publishNotReadyAddresses: true
   ports:
     - port: 80
       targetPort: 8080
