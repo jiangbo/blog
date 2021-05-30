@@ -10,3 +10,5 @@
 10. runtimeClassName
 11. affinity
 12. initContainers
+
+Taints:             node-role.kubernetes.io/master:NoSchedule
