@@ -1,4 +1,4 @@
-# 【k8s】ing-rules-host
+# 【k8s】ing-rules-path
 
 ## 环境
 
