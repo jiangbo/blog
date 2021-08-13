@@ -62,10 +62,10 @@ sjF8d1m5ndqywnT3/M7yrKiijsbZIrAsmMAKMaEUiwnY6Jt8rXwl8g==
 
 ### 生成证书请求
 
-Subject 中的信息需要和 CA 中的一致，CN 表示需要使用的域名，带 * 表示是一个泛域名。
+Subject 中的信息需要和 CA 中的一致，CN 表示需要使用的域名。
 
 ```
-[root@master ssl]# openssl req -key server.key -new  -out server.csr  -subj '/CN=*.jiangbo.com/O=jiangbo/ST=ChongQing/L=ChongQing/C=CN'
+[root@master ssl]# openssl req -key server.key -new  -out server.csr  -subj '/CN=*.jiang.bo/O=jiangbo/ST=ChongQing/L=ChongQing/C=CN'
 [root@master ssl]# cat server.csr
 -----BEGIN CERTIFICATE REQUEST-----
 MIICpDCCAYwCAQAwXzEWMBQGA1UEAwwNKi5qaWFuZ2JvLmNvbTEQMA4GA1UECgwH
@@ -93,7 +93,7 @@ tTssKtjkzSU=
 Certificate Request:
     Data:
         Version: 0 (0x0)
-        Subject: CN=*.jiangbo.com, O=jiangbo, ST=ChongQing, L=ChongQing, C=CN
+        Subject: CN=*.jiang.bo, O=jiangbo, ST=ChongQing, L=ChongQing, C=CN
         Subject Public Key Info:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (2048 bit)
@@ -146,7 +146,7 @@ subjectAltName 表示备用域名
 ```
 basicConstraints=CA:FALSE, pathlen:0
 extendedKeyUsage=serverAuth
-subjectAltName=DNS:jiangbo.com,DNS:www.jiangbo.com
+subjectAltName=DNS:jiang.bo,DNS:www.jiang.bo
 ```
 
 ```
@@ -163,7 +163,7 @@ Certificate Details:
             countryName               = CN
             stateOrProvinceName       = ChongQing
             organizationName          = jiangbo
-            commonName                = *.jiangbo.com
+            commonName                = *.jiang.bo
         X509v3 extensions:
             X509v3 Basic Constraints:
                 CA:FALSE, pathlen:0
@@ -193,7 +193,7 @@ Certificate:
         Validity
             Not Before: Jun 13 17:50:17 2021 GMT
             Not After : Mar 29 17:50:17 2295 GMT
-        Subject: C=CN, ST=ChongQing, O=jiangbo, CN=*.jiangbo.com
+        Subject: C=CN, ST=ChongQing, O=jiangbo, CN=*.jiang.bo
         Subject Public Key Info:
             Public Key Algorithm: rsaEncryption
                 Public-Key: (2048 bit)
@@ -223,7 +223,7 @@ Certificate:
             X509v3 Extended Key Usage:
                 TLS Web Server Authentication
             X509v3 Subject Alternative Name:
-                DNS:jiangbo.com, DNS:www.jiangbo.com
+                DNS:jiang.bo, DNS:www.jiang.bo
     Signature Algorithm: sha256WithRSAEncryption
          9e:c3:b5:11:20:41:58:89:dd:a8:af:be:50:ef:9f:40:a7:6f:
          e4:c3:c5:9e:e4:ae:10:90:a5:00:bd:91:b2:28:df:c8:05:95:
