@@ -7,7 +7,7 @@
 
 ## 概念
 
-格式化练习，参考资料：<https://rust-by-example.budshome.com/hello/print/fmt.html>
+格式化练习，参考资料：<https://doc.rust-lang.org/stable/rust-by-example/hello/print/fmt.html>
 
 ## 示例
 
@@ -52,8 +52,8 @@ fn main() {
     ]
     .iter()
     {
-        // 在添加了针对 fmt::Display 的实现后，请改用 {} 检验效果。
-        // println!("{:?}", *color);
+        // Switch this to use {} once you've added an implementation
+        // for fmt::Display.
         println!("{}", *color)
     }
 }
