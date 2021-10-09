@@ -29,7 +29,7 @@ impl Rectangle {
         let Rectangle {
             top_left: Point { x: x1, y: y1 },
             bottom_right: Point { x: x2, y: y2 },
-        } = &self;
+        } = self;
 
         ((x1 - x2) * (y1 - y2)).abs()
     }
