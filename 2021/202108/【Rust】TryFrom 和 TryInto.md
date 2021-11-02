@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://doc.rust-lang.org/stable/rust-by-example/conversion/try_from_try_into.htmll>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/conversion/try_from_try_into.html>  
 
 TryFrom/TryInto 和 From/Into 类似，不过用于可能发生异常的转换，所以返回结果是 Result。
 
