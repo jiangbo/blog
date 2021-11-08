@@ -15,7 +15,7 @@
 
 ### Fn
 
-Fn 是通过不可变的引用捕获变量。
+Fn 可以通过不可变的引用捕获变量。
 
 ```rust
 fn apply<F>(f: F)
@@ -35,7 +35,7 @@ fn main() {
 
 ### FnMut
 
-通过可变引用捕获。
+可以通过可变引用捕获。
 
 ```rust
 fn apply<F>(mut f: F)
@@ -57,23 +57,21 @@ fn main() {
 
 ### FnOnce
 
-通过值捕获。
+可以通过值捕获。
 
 ```rust
-fn apply<F>(f: F)
+fn apply<F>(f: F) -> String
 where
-    F: FnOnce(),
+    F: FnOnce() -> String,
 {
-    f();
+    f()
 }
 
 fn main() {
-    let mut name = "jiangbo".to_owned();
-    let say = || {
-        name.push_str("44");
-        println!("hello: {:?}", name);
-    };
-    apply(say);
+    let name = "jiangbo".to_owned();
+    let return_name = || name;
+    apply(return_name);
+    // apply(return_name);
 }
 ```
 
