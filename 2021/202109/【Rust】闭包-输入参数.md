@@ -55,7 +55,9 @@ fn main() {
 }
 ```
 
-### 捕获值
+### FnOnce
+
+通过值捕获。
 
 ```rust
 fn apply<F>(f: F)
