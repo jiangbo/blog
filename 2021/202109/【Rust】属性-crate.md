@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://rust-by-example.budshome.com/attribute/crate.html>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/attribute/crate.html>  
 
 ## 示例
 

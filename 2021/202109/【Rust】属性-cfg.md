@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://rust-by-example.budshome.com/attribute/cfg.html>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/attribute/cfg.html>  
 
 ## 示例
 
