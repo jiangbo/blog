@@ -12,14 +12,14 @@
 
 ## 查看软件版本
 
-```
+```text
 [root@master k8s]# openssl version
 OpenSSL 1.0.2k-fips  26 Jan 2017
 ```
 
 ### 生成 CA 私钥
 
-```
+```text
 [root@master ssl]#  openssl genrsa -out ca.key
 Generating RSA private key, 2048 bit long modulus
 ......................+++
@@ -30,7 +30,7 @@ e is 65537 (0x10001)
 
 ### 查看 CA 私钥
 
-```
+```text
 [root@master ssl]# cat ca.key
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpQIBAAKCAQEA4n3obroNeycZPr78I8xcJTw/IPFvwxP456S1pc5PyoF74oqs
@@ -63,7 +63,7 @@ Yy71Hj7VoGQabEuG+sotsxyIpH3Iwdi2+0Pofb9a+yx936U7yjrsJa0=
 
 ### 生成 CA 证书
 
-```
+```text
 [root@master ssl]# openssl req -x509 -new -key ca.key -subj "/CN=JiangBo/C=CN/ST=ChongQing/L=ChongQing/O=jiangbo" -days 100000 -out ca.crt
 [root@master ssl]# ll
 total 8
@@ -73,7 +73,7 @@ total 8
 
 ### 查看 CA 证书
 
-```
+```text
 [root@master ssl]# cat ca.crt
 -----BEGIN CERTIFICATE-----
 MIIDhzCCAm+gAwIBAgIJAPhOv6nUJwCxMA0GCSqGSIb3DQEBCwUAMFkxEDAOBgNV
@@ -100,7 +100,7 @@ jXDaf5/C6HwRkND6abHtLVlIxLO9ndTniA23LC1/xuyak/uQIxJFP62rFw==
 
 ### 查看 CA 证书详情
 
-```
+```text
 [root@master ssl]# openssl x509 -noout -text -in ca.crt
 Certificate:
     Data:

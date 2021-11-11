@@ -12,14 +12,14 @@
 
 ## 查看软件版本
 
-```
+```text
 [root@master k8s]# openssl version
 OpenSSL 1.0.2k-fips  26 Jan 2017
 ```
 
 ### 生成服务器私钥
 
-```
+```text
 [root@master ssl]# openssl genrsa -out server.key
 Generating RSA private key, 2048 bit long modulus
 ........................................................+++
@@ -29,7 +29,7 @@ e is 65537 (0x10001)
 
 ### 查看服务器私钥
 
-```
+```text
 [root@master ssl]# cat server.key
 -----BEGIN RSA PRIVATE KEY-----
 MIIEpAIBAAKCAQEAnubhdyxuh1HPkXPVGZ3vBSOXyylYiZ359lHcjqL5hNUxpiWD
@@ -64,7 +64,7 @@ sjF8d1m5ndqywnT3/M7yrKiijsbZIrAsmMAKMaEUiwnY6Jt8rXwl8g==
 
 Subject 中的信息需要和 CA 中的一致，CN 表示需要使用的域名。
 
-```
+```text
 [root@master ssl]# openssl req -key server.key -new  -out server.csr  -subj '/CN=*.jiang.bo/O=jiangbo/ST=ChongQing/L=ChongQing/C=CN'
 [root@master ssl]# cat server.csr
 -----BEGIN CERTIFICATE REQUEST-----
@@ -88,7 +88,7 @@ tTssKtjkzSU=
 
 ### 查看证书请求
 
-```
+```text
 [root@master ssl]# openssl req -noout -text -in server.csr
 Certificate Request:
     Data:
@@ -143,13 +143,13 @@ Certificate Request:
 
 subjectAltName 表示备用域名
 
-```
+```text
 basicConstraints=CA:FALSE, pathlen:0
 extendedKeyUsage=serverAuth
 subjectAltName=DNS:jiang.bo,DNS:www.jiang.bo
 ```
 
-```
+```text
 [root@master ssl]# openssl ca  -days 100000 -in server.csr -cert ca.crt -keyfile ca.key  -out server.crt -extfile extfile.ext
 Using configuration from /etc/pki/tls/openssl.cnf
 Check that the request matches the signature
@@ -182,7 +182,7 @@ Data Base Updated
 
 ### 查看服务器证书
 
-```
+```text
 [root@master ssl]# openssl x509 -noout -text -in server.crt
 Certificate:
     Data:
@@ -250,7 +250,7 @@ Certificate:
 
 ### 找不到 /etc/pki/CA/index.txt
 
-```
+```text
 Using configuration from /etc/pki/tls/openssl.cnf
 /etc/pki/CA/index.txt: No such file or directory
 unable to open '/etc/pki/CA/index.txt'
@@ -262,7 +262,7 @@ unable to open '/etc/pki/CA/index.txt'
 
 ### 找不到 /etc/pki/CA/serial
 
-```
+```text
 Using configuration from /etc/pki/tls/openssl.cnf
 /etc/pki/CA/serial: No such file or directory
 error while loading serial number
@@ -271,4 +271,3 @@ error while loading serial number
 ```
 
 使用命令 `echo 01 > /etc/pki/CA/serial` 修复
-
