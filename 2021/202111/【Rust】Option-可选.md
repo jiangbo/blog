@@ -1,4 +1,4 @@
-# 【Rust】错误-可选
+# 【Rust】Option-可选
 
 ## 环境
 
@@ -26,7 +26,7 @@ fn give_adult(drink: Option<&str>) {
 }
 
 fn drink(drink: Option<&str>) {
-    // 如果没有，则会恐慌
+    // unwrap 展开，如果没有，则会恐慌
     let inside = drink.unwrap();
     if inside == "lemonade" {
         panic!("AAAaaaaa!!!!");
