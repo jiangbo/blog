@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://rust-by-example.budshome.com/generics/phantom/testcase_units.html>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/generics/phantom/testcase_units.html>  
 
 ## 示例
 

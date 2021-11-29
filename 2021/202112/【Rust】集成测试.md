@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://rust-by-example.budshome.com/testing/integration_testing.html>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/testing/integration_testing.html>  
 
 ## 示例
 
