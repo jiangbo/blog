@@ -128,7 +128,7 @@ status: {}
 
 在之前，配置了一个 Nginx Ingress，并且开放了 NodePort 端口，在这里，将其配置为默认的端口。
 
-```
+```text
 [root@master ~]# kubectl get svc -A | grep ingress
 kube-system   ingress-nginx-controller             NodePort       10.111.181.202   <none>                                               80:80/TCP,443:443/TCP    67d
 kube-system   ingress-nginx-controller-admission   ClusterIP      10.97.90.55      <none>                                               443/TCP                  67d

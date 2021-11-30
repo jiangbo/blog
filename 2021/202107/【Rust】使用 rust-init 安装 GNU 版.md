@@ -182,7 +182,7 @@ Press the Enter key to continue.
 使用命令 `rustc --version` 命令验证是否安装成功。
 
 ```txt
-C:\Users\jiangbo1446>rustc --version
+C:\Users\jiangbo>rustc --version
 rustc 1.54.0 (a178d0322 2021-07-26)
 ```
 
