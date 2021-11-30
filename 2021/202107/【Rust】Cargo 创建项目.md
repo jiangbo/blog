@@ -14,7 +14,7 @@
 
 ### 创建项目
 
-运行 `cargo new hello_world` 命令后，得到和 [【Rust】使用 Cargo 编译和运行][1] 中一样的目录结构。  
+运行 `cargo new hello_world` 命令后，得到和 [【Rust】Cargo 编译和运行][1] 中一样的目录结构。  
 并且在此基础上，还生成了 Git 忽略的文件和本地仓库，这里不介绍 Git 相关基础。  
 
 ```txt
@@ -39,4 +39,4 @@ Hello, world!
 
 ## 附录
 
-[1]:xxx
+[1]:https://www.cnblogs.com/jiangbo44/p/15626589.html
