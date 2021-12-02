@@ -1,4 +1,4 @@
-# 【Rust】JSON 转 Value
+# 【Serde】构造 JSON Value
 
 ## 环境
 
@@ -13,6 +13,33 @@
 
 ## 示例
 
+可以在 JSON 中写变量。
+
+### main.rs
+
+```rust
+use serde_json::json;
+
+fn main() {
+    let name = "JiangBo";
+    let rust = "Rust";
+    let value = json!(
+    {
+        "name": name,
+        "age": 44,
+        "languages": [
+            rust,
+            "Java"
+        ]
+    });
+
+    println!(
+        "{}, {} years old, like {}",
+        value["name"], value["age"], value["languages"][0]
+    );
+}
+```
+
 ### Cargo.toml
 
 ```toml
@@ -22,31 +49,8 @@ name = "game"
 version = "0.1.0"
 
 [dependencies]
+serde = {version = "1.0.130", features = ["derive"]}
 serde_json = "1.0.72"
-```
-
-### main.rs
-
-```rust
-use serde_json::Value;
-
-fn main() {
-    let data = r#"
-    {
-        "name": "JiangBo",
-        "age": 44,
-        "languages": [
-            "Rust",
-            "Java"
-        ]
-    }"#;
-
-    let value: Value = serde_json::from_str(data).unwrap();
-    println!(
-        "{}, {} years old, like {}",
-        value["name"], value["age"], value["languages"][0]
-    );
-}
 ```
 
 ## 总结
