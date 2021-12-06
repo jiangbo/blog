@@ -26,7 +26,7 @@ $ tree .
 ### main.rs
 
 ```rust
-// 这个会去找 mod.rs 或者 my/mod.rs 文件，并插入到这个地方。
+// 这个会去找 my.rs 或者 my/mod.rs 文件，并插入到这个地方。
 mod my;
 
 fn function() {
