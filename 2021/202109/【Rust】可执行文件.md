@@ -54,8 +54,8 @@ fn main() {
 ### 默认可执行文件
 
 ```text
-PS C:\Users\jiangbo1446\work\workspace\rust\rust> cargo run --bin rust
-   Compiling rust v0.1.0 (C:\Users\jiangbo1446\work\workspace\rust\rust)
+PS C:\Users\jiangbo\work\workspace\rust\rust> cargo run --bin rust
+   Compiling rust v0.1.0 (C:\Users\jiangbo\work\workspace\rust\rust)
     Finished dev [unoptimized + debuginfo] target(s) in 1.74s
      Running `target\debug\rust.exe`
 main.rs
@@ -64,8 +64,8 @@ main.rs
 ### 其它可执行文件
 
 ```text
-PS C:\Users\jiangbo1446\work\workspace\rust\rust> cargo run --bin other
-   Compiling rust v0.1.0 (C:\Users\jiangbo1446\work\workspace\rust\rust)
+PS C:\Users\jiangbo\work\workspace\rust\rust> cargo run --bin other
+   Compiling rust v0.1.0 (C:\Users\jiangbo\work\workspace\rust\rust)
     Finished dev [unoptimized + debuginfo] target(s) in 1.82s
      Running `target\debug\other.exe`
 other.rs
