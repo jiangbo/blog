@@ -30,8 +30,8 @@ pub fn public_function() {
 ### 生成库
 
 ```text
-PS C:\Users\jiangbo1446\work\workspace\rust\rust\src> rustc .\other.rs
-PS C:\Users\jiangbo1446\work\workspace\rust\rust\src> dir
+PS C:\Users\jiangbo\work\workspace\rust\rust\src> rustc .\other.rs
+PS C:\Users\jiangbo\work\workspace\rust\rust\src> dir
 Mode                LastWriteTime     Length Name
 ----                -------------     ------ ----
 -a---        2021/11/10     20:47      10264 library.rlib
