@@ -39,7 +39,7 @@ fn add(x: i32, y: i32) -> i32 {
 
 ```txt
 PS C:\Users\jiangbo\work\workspace\rust\hello_world> cargo doc
- Documenting hello_world v0.1.0 (C:\Users\jiangbo1446\work\workspace\rust\hello_world)
+ Documenting hello_world v0.1.0 (C:\Users\jiangbo\work\workspace\rust\hello_world)
     Finished dev [unoptimized + debuginfo] target(s) in 0.79s
 ```
 

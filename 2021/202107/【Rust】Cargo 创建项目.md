@@ -26,7 +26,7 @@ C:\Users\jiangbo\work\workspace\rust>cargo new hello_world
 
 ```txt
 C:\Users\jiangbo\work\workspace\rust\hello_world>cargo run
-   Compiling hello_world v0.1.0 (C:\Users\jiangbo1446\work\workspace\rust\hello_world)
+   Compiling hello_world v0.1.0 (C:\Users\jiangbo\work\workspace\rust\hello_world)
     Finished dev [unoptimized + debuginfo] target(s) in 1.82s
      Running `target\debug\hello_world.exe`
 Hello, world!

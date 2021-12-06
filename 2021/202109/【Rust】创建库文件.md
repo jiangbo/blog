@@ -38,7 +38,7 @@ pub fn indirect_access() {
 除了通过 rustc 直接编译，也可以通过 cargo 来创建。通过 `cargo new rary --lib --vcs=none` 命令创建新项目。
 
 ```text
-PS C:\Users\jiangbo1446\work\workspace\rust\rust> cargo new rary --lib --vcs=none
+PS C:\Users\jiangbo\work\workspace\rust\rust> cargo new rary --lib --vcs=none
      Created library `rary` package
 ```
 
