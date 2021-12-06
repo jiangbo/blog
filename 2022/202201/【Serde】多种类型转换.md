@@ -15,7 +15,7 @@
 
 如果在 JSON 中某个字段有多种类型，可以使用下面的方式处理。
 
-### main.rs
+### 直接转
 
 ```rust
 use serde::{Deserialize, Deserializer, Serialize};
@@ -63,8 +63,43 @@ fn main() {
 }
 ```
 
+### 转为枚举
+
+```rust
+use serde::Deserialize;
+
+#[derive(Deserialize, Debug)]
+struct Person {
+    name: String,
+    age: StrOrU16,
+}
+
+#[derive(Deserialize, Debug)]
+#[serde(untagged)] // 枚举类型的无标签方式
+enum StrOrU16 {
+    String(String),
+    U64(u16),
+}
+
+fn main() {
+    let json = r#"{
+        "name":"JiangBo",
+        "age": "44"
+    }"#;
+
+    println!("{:?}", serde_json::from_str::<Person>(json).unwrap());
+
+    let json = r#"{
+        "name":"JiangBo",
+        "age": 44
+    }"#;
+
+    println!("{:?}", serde_json::from_str::<Person>(json).unwrap());
+}
+```
+
 ## 总结
 
-使用 serde 反序列化时，如果 JSON 中的类型和程序中的类型不匹配，可以针对某个字段进行自定义转换。
+使用 serde 反序列化时，如果 JSON 中的类型和程序中的类型不匹配，可以使用上面的方式转换。
 
 ## 附录
