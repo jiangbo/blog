@@ -29,37 +29,14 @@ struct Person {
 #[derive(Debug)]
 struct MyVec(Vec<String>);
 
-struct MyVecVisitor;
-
-impl<'de> Visitor<'de> for MyVecVisitor {
-    type Value = MyVec;
-
-    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
-        formatter.write_str("my vec error")
-    }
-
-    fn visit_str<E>(self, v: &str) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        let vec = v.split(',').map(str::to_string).collect();
-        Ok(MyVec(vec))
-    }
-
-    fn visit_string<E>(self, v: String) -> Result<Self::Value, E>
-    where
-        E: serde::de::Error,
-    {
-        self.visit_str(&v)
-    }
-}
-
 impl<'de> Deserialize<'de> for MyVec {
     fn deserialize<D>(deserializer: D) -> Result<MyVec, D::Error>
     where
         D: Deserializer<'de>,
     {
-        deserializer.deserialize_str(MyVecVisitor)
+        let s = String::deserialize(deserializer)?;
+        let vec = s.split(',').map(str::to_string).collect();
+        Ok(MyVec(vec))
     }
 }
 
