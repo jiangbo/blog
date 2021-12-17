@@ -1,14 +1,5 @@
-1. mount -> configMap
-2. mount -> secret
-3. securityContext
-4. volumeDevices
-5. volumeMounts
-6. automountServiceAccountToken
-7. overhead
-8. preemptionPolicy
-9. readinessGates
-10. runtimeClassName
-11. affinity
-12. initContainers
+# 笔记
 
-Taints:             node-role.kubernetes.io/master:NoSchedule
+## dos2unix
+
+git-bash 命令行：find . -type f -exec dos2unix {} \;
