@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://doc.rust-lang.org/rust-by-example/error/multiple_error_types.html>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/error/multiple_error_types/option_result.html>  
 
 ## 示例
 
