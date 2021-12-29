@@ -7,7 +7,7 @@
 
 ## 概念
 
-参考：<https://doc.rust-lang.org/stable/rust-by-example/std_misc/threads.html>  
+参考：<https://doc.rust-lang.org/stable/rust-by-example/std_misc/channels.html>  
 
 ## 示例
 
