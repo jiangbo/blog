@@ -10,9 +10,22 @@
 
 参考：<https://github.com/tokio-rs/mio/blob/master/examples/tcp_server.rs>  
 
+mio 是跨平台的非阻塞 IO 库，在其它平台实现类似 linux 下 epoll 的的特性。
 实现一个 TCP 服务器，先编写绑定端口和获取连接的客户端信息的逻辑。
 
 ## 示例
+
+### Cargo.toml
+
+```toml
+[package]
+edition = "2021"
+name = "game"
+version = "0.1.0"
+
+[dependencies]
+mio = {version = "*", features = ["os-poll", "net"]}
+```
 
 ### 绑定 IP 和端口
 
