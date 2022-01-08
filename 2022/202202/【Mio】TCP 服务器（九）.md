@@ -1,4 +1,4 @@
-# 【mio】TCP 服务器（八）
+# 【Mio】TCP 服务器（九）
 
 ## 环境
 
@@ -10,38 +10,37 @@
 
 参考：<https://github.com/tokio-rs/mio/blob/master/examples/tcp_server.rs>  
 
-实现小写转大写的应答消息。
+监听客户端关闭连接。
 
 ## 示例
 
-### 应答消息
+### 关闭标记
 
 ```rust
-fn handle_client(event: &Event, client: &mut TcpStream) -> io::Result<()> {
-    if event.is_readable() {
-        let mut buffer = vec![0; 4096];
-        let mut bytes_read = 0;
-        loop {
-            match client.read(&mut buffer) {
-                Ok(n) => bytes_read = n,
-                Err(e) if e.kind() == WouldBlock => break,
-                Err(err) => return Err(err),
-            }
-        }
+loop {
+    match client.read(&mut buffer) {
+        Ok(0) => return Ok(true),
+        Ok(n) => bytes_read = n,
+        Err(e) if e.kind() == WouldBlock => break,
+        Err(err) => return Err(err),
+    }
+}
+```
 
-        if bytes_read != 0 {
-            let received = &buffer[..bytes_read];
-            let str = from_utf8(received).unwrap();
-            client.write_all(str.to_ascii_uppercase().as_bytes())?;
-        }
-    };
-    Ok(())
+### 关闭处理
+
+```rust
+if handle_client(event, client)? {
+    if let Some(mut client) = clients.remove(&token) {
+        println!("{} 连接已关闭", client.peer_addr()?);
+        poll.registry().deregister(&mut client)?;
+    }
 }
 ```
 
 ## 总结
 
-读取客户端消息，将小写转为大写并写回客户端。
+监听客户端关闭连接，取消事件注册。
 
 ## 附录
 
@@ -83,7 +82,12 @@ fn main() -> io::Result<()> {
                 }
                 token => {
                     if let Some(client) = clients.get_mut(&token) {
-                        handle_client(event, client)?;
+                        if handle_client(event, client)? {
+                            if let Some(mut client) = clients.remove(&token) {
+                                println!("{} 连接已关闭", client.peer_addr()?);
+                                poll.registry().deregister(&mut client)?;
+                            }
+                        }
                     }
                 }
             }
@@ -114,12 +118,13 @@ fn accept(
     Ok(Some((token, client)))
 }
 
-fn handle_client(event: &Event, client: &mut TcpStream) -> io::Result<()> {
+fn handle_client(event: &Event, client: &mut TcpStream) -> io::Result<bool> {
     if event.is_readable() {
         let mut buffer = vec![0; 4096];
         let mut bytes_read = 0;
         loop {
             match client.read(&mut buffer) {
+                Ok(0) => return Ok(true),
                 Ok(n) => bytes_read = n,
                 Err(e) if e.kind() == WouldBlock => break,
                 Err(err) => return Err(err),
@@ -129,9 +134,10 @@ fn handle_client(event: &Event, client: &mut TcpStream) -> io::Result<()> {
         if bytes_read != 0 {
             let received = &buffer[..bytes_read];
             let str = from_utf8(received).unwrap();
+            println!("收到数据：{}", str);
             client.write_all(str.to_ascii_uppercase().as_bytes())?;
         }
     };
-    Ok(())
+    Ok(false)
 }
 ```

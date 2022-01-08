@@ -1,4 +1,4 @@
-# 【mio】TCP 服务器（九）
+# 【Mio】TCP 服务器（十）
 
 ## 环境
 
@@ -10,37 +10,33 @@
 
 参考：<https://github.com/tokio-rs/mio/blob/master/examples/tcp_server.rs>  
 
-监听客户端关闭连接。
+处理读取时数据超长问题。
+
+> TCP 服务器基本功能实现完成，只能做练习使用，不可用于生产环境。
 
 ## 示例
 
-### 关闭标记
+### 扩容
 
 ```rust
 loop {
     match client.read(&mut buffer) {
         Ok(0) => return Ok(true),
-        Ok(n) => bytes_read = n,
+        Ok(n) => {
+            bytes_read += n;
+            if bytes_read == buffer.len() {
+                buffer.resize(buffer.len() + 1024, 0);
+            }
+        }
         Err(e) if e.kind() == WouldBlock => break,
         Err(err) => return Err(err),
     }
 }
 ```
 
-### 关闭处理
-
-```rust
-if handle_client(event, client)? {
-    if let Some(mut client) = clients.remove(&token) {
-        println!("{} 连接已关闭", client.peer_addr()?);
-        poll.registry().deregister(&mut client)?;
-    }
-}
-```
-
 ## 总结
 
-监听客户端关闭连接，取消事件注册。
+检查客户端数据是否超过了缓存大小，超过了就进行扩容。
 
 ## 附录
 
@@ -125,7 +121,12 @@ fn handle_client(event: &Event, client: &mut TcpStream) -> io::Result<bool> {
         loop {
             match client.read(&mut buffer) {
                 Ok(0) => return Ok(true),
-                Ok(n) => bytes_read = n,
+                Ok(n) => {
+                    bytes_read += n;
+                    if bytes_read == buffer.len() {
+                        buffer.resize(buffer.len() + 1024, 0);
+                    }
+                }
                 Err(e) if e.kind() == WouldBlock => break,
                 Err(err) => return Err(err),
             }

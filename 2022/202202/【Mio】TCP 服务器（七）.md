@@ -1,4 +1,4 @@
-# 【mio】TCP 服务器（六）
+# 【Mio】TCP 服务器（七）
 
 ## 环境
 
@@ -10,63 +10,50 @@
 
 参考：<https://github.com/tokio-rs/mio/blob/master/examples/tcp_server.rs>  
 
-main 函数越来越长，将长函数分割成功能较少的小函数。
+接受客户端发送的数据。
 
 ## 示例
 
-### accept
+### 读取数据
 
 ```rust
-fn accept(
-    server: &TcpListener,
-    unique_token: &mut Token,
-    poll: &Poll,
-) -> io::Result<Option<(Token, TcpStream)>> {
-    let (mut client, address) = match server.accept() {
-        Ok((client, address)) => (client, address),
-        Err(e) if e.kind() == WouldBlock => return Ok(None),
-        Err(e) => return Err(e),
-    };
+if event.is_readable() {
+    println!("状态可读");
 
-    unique_token.0 += 1;
-    let token = *unique_token;
-    poll.registry().register(
-        &mut client,
-        token,
-        Interest::READABLE.add(Interest::WRITABLE),
-    )?;
-
-    println!("客户端: {}", address);
-    Ok(Some((token, client)))
-}
-```
-
-### 客户端处理
-
-```rust
-fn handle_client(event: &Event, client: &mut TcpStream) {
-    if event.is_writable() {
-        println!("状态可写");
-        client.write_all(b"hello world\n").unwrap();
+    let mut buffer = vec![0; 4096];
+    let mut bytes_read = 0;
+    loop {
+        match client.read(&mut buffer) {
+            Ok(n) => bytes_read = n,
+            Err(e) if e.kind() == WouldBlock => break,
+            Err(err) => return Err(err),
+        }
     }
 
-    if event.is_readable() {
-        println!("is_readable")
+    if bytes_read != 0 {
+        let received = &buffer[..bytes_read];
+        let str = from_utf8(received).unwrap();
+        println!("收到数据：{}", str.trim_end());
     }
-}
+};
 ```
 
 ### 使用 nc 命令访问
 
 ```text
-nc 127.0.0.1 4444
-hello world
-
+客户端: 127.0.0.1:50716
+状态可写
+状态可读
+收到数据：4444
+状态可写
+状态可读
+收到数据：你好
+状态可写
 ```
 
 ## 总结
 
-分割 main 函数，将长函数分割成小函数。
+读取客户端发送的数据。
 
 ## 附录
 
@@ -80,7 +67,8 @@ use mio::{
 };
 use std::{
     collections::HashMap,
-    io::{self, ErrorKind::WouldBlock, Write},
+    io::{self, ErrorKind::WouldBlock, Read, Write},
+    str::from_utf8,
 };
 
 const SERVER: Token = Token(0);
@@ -107,7 +95,7 @@ fn main() -> io::Result<()> {
                 }
                 token => {
                     if let Some(client) = clients.get_mut(&token) {
-                        handle_client(event, client);
+                        handle_client(event, client)?;
                     }
                 }
             }
@@ -138,14 +126,31 @@ fn accept(
     Ok(Some((token, client)))
 }
 
-fn handle_client(event: &Event, client: &mut TcpStream) {
+fn handle_client(event: &Event, client: &mut TcpStream) -> io::Result<()> {
     if event.is_writable() {
         println!("状态可写");
         client.write_all(b"hello world\n").unwrap();
     }
 
     if event.is_readable() {
-        println!("is_readable")
-    }
+        println!("状态可读");
+
+        let mut buffer = vec![0; 4096];
+        let mut bytes_read = 0;
+        loop {
+            match client.read(&mut buffer) {
+                Ok(n) => bytes_read = n,
+                Err(e) if e.kind() == WouldBlock => break,
+                Err(err) => return Err(err),
+            }
+        }
+
+        if bytes_read != 0 {
+            let received = &buffer[..bytes_read];
+            let str = from_utf8(received).unwrap();
+            println!("收到数据：{}", str.trim_end());
+        }
+    };
+    Ok(())
 }
 ```
