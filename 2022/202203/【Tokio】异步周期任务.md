@@ -63,6 +63,6 @@ async fn main() -> io::Result<()> {
 
 ## 总结
 
-查看了 Tokio 和标准库中线程休眠函数的不同，以及休眠多久和休眠到什么时候。
+通过 `interval` 和 `interval_at` 来定义异步的周期性任务。
 
 ## 附录
