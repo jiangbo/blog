@@ -10,7 +10,7 @@
 
 参考：<https://docs.rs/tokio/latest/tokio/sync/oneshot/index.html>  
 
-`` 可以实现单对单的消息通信，不过只能通信一次。
+`oneshot` 可以实现单对单的消息通信，不过只能通信一次。
 
 ## 示例
 
