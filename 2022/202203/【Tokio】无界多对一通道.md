@@ -1,4 +1,4 @@
-# 【Tokio】有界多对一通道
+# 【Tokio】无界多对一通道
 
 ## 环境
 
@@ -16,7 +16,7 @@
 
 ### main.rs
 
-发送通道满的时候，会被阻塞。
+无界通道不会阻塞发送者。
 
 ```rust
 use std::time::Duration;
@@ -26,12 +26,12 @@ use tokio::time;
 
 #[tokio::main]
 async fn main() {
-    let (tx, mut rx) = mpsc::channel(4);
+    let (tx, mut rx) = mpsc::unbounded_channel();
 
     for index in 0..10 {
         let tx = tx.clone();
         tokio::spawn(async move {
-            tx.send(format!("index {}", index)).await.unwrap();
+            tx.send(format!("index {}", index)).unwrap();
             println!("send index: {}", index);
         });
     }
@@ -46,6 +46,6 @@ async fn main() {
 
 ## 总结
 
-`mpsc` 可以实现多个生产者，一个消费者的通道，可以对通道设置上限，达到最大时会被阻塞。
+`mpsc` 可以实现多个生产者，一个消费者的通道，无界通道不会阻塞发送者，所以发送可以不用异步。
 
 ## 附录
