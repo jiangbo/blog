@@ -2,7 +2,7 @@
 
 ## 环境
 
-- Time 2022-01-12
+- Time 2022-01-13
 - Rust 1.57.0
 - Tokio 1.15.0
 
@@ -12,7 +12,7 @@
 
 之前使用 `Mio` 实现了一个简单的 TCP 服务器，再使用 `Tokio` 实现。
 
->只做练习使用，不可用于生产环境。
+>练习使用，不可用于生产环境。
 
 ## 示例
 
@@ -34,8 +34,8 @@ async fn main() -> Result<()> {
 }
 
 async fn process_socket(mut client: TcpStream) -> Result<()> {
+    let mut buffer = vec![0; 4096];
     loop {
-        let mut buffer = vec![0; 4096];
         let size = client.read(&mut buffer).await?;
         if size == 0 {
             println!("{} 连接已关闭", client.peer_addr()?);
