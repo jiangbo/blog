@@ -1,4 +1,4 @@
-# 【Axum】返回普通文本
+# 【Axum】返回网页文本
 
 ## 环境
 
@@ -15,7 +15,7 @@
 ### main.rs
 
 ```rust
-use axum::{routing::get, Router};
+use axum::{response::Html, routing::get, Router};
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -30,13 +30,13 @@ async fn main() {
         .unwrap();
 }
 
-async fn home() -> &'static str {
-    "hello world"
+async fn home() -> Html<&'static str> {
+    Html("<h1>hello world</h1>")
 }
 ```
 
 ## 总结
 
-使用 axum 启动了一个服务器，访问时返回普通文本 `hello world`。
+使用 axum 启动了一个服务器，访问时返回网页文本 `hello world`。
 
 ## 附录
