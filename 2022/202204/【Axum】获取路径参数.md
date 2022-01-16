@@ -16,7 +16,6 @@
 
 ```rust
 use axum::{extract::Path, routing::get, Router};
-use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -31,12 +30,6 @@ async fn main() {
         .unwrap();
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct User {
-    id: usize,
-    name: String,
-}
-
 async fn home(Path(name): Path<String>) -> String {
     println!("{:#?}", name);
     name
@@ -47,7 +40,6 @@ async fn home(Path(name): Path<String>) -> String {
 
 ```rust
 use axum::{extract::Path, routing::get, Router};
-use serde::{Deserialize, Serialize};
 use std::net::SocketAddr;
 
 #[tokio::main]
@@ -60,12 +52,6 @@ async fn main() {
         .serve(app.into_make_service())
         .await
         .unwrap();
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct User {
-    id: usize,
-    name: String,
 }
 
 async fn home(Path((name, id)): Path<(String, usize)>) -> String {
