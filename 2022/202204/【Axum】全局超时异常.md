@@ -15,7 +15,8 @@
 ### main.rs
 
 ```rust
-use axum::{error_handling::HandleErrorLayer, http::StatusCode, routing::get, BoxError, Router};
+use axum::error_handling::HandleErrorLayer;
+use axum::{http::StatusCode, routing::get, BoxError, Router};
 use std::{net::SocketAddr, time::Duration};
 use tower::ServiceBuilder;
 
@@ -34,8 +35,9 @@ async fn main() {
         .unwrap();
 }
 
-async fn home() -> Result<String, BoxError> {
-    Ok(tokio::fs::read_to_string("Cargo.toml").await?)
+async fn home() -> String {
+    tokio::time::sleep(Duration::from_secs(10)).await;
+    "hello world".to_owned()
 }
 
 async fn handle_timeout_error(err: BoxError) -> (StatusCode, String) {
