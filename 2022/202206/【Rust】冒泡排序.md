@@ -81,4 +81,4 @@ Found 21 outliers among 100 measurements (21.00%)
 
 ## 附录
 
-[1]: image/bubble_sort.gif
+[1]: images/bubble_sort.gif
