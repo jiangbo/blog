@@ -88,7 +88,7 @@ fn bubble_sort(data: &mut [i32]) {
         swapped = false;
         len -= 1;
         for i in 0..len {
-            // 只需要将比较运算符取反都就可以反向
+            // 只需要将比较运算符取反就可以反向
             if data[i] < data[i + 1] {
                 data.swap(i, i + 1);
                 swapped = true;
