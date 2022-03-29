@@ -78,6 +78,26 @@ Found 21 outliers among 100 measurements (21.00%)
   21 (21.00%) high severe
 ```
 
+## 倒序
+
+```rust
+fn bubble_sort(data: &mut [i32]) {
+    let mut swapped = true;
+    let mut len = data.len();
+    while swapped && len > 1 {
+        swapped = false;
+        len -= 1;
+        for i in 0..len {
+            // 只需要将比较运算符取反都就可以反向
+            if data[i] < data[i + 1] {
+                data.swap(i, i + 1);
+                swapped = true;
+            }
+        }
+    }
+}
+```
+
 ## 总结
 
 实现了冒泡排序功能。
