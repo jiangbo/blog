@@ -68,14 +68,14 @@ fn test_multi() {
 
 ### 性能
 
-冒泡排序的时间复杂度是 n 平方，和标准库排序的性能比对（10W数据量）：
+冒泡排序的时间复杂度是 n 平方，和标准库排序的性能比对（1W数据量）：
 
 ```text
-sort                    time:   [73.043 us 73.879 us 74.926 us]
-                        change: [+18.504% +22.872% +27.043%] (p = 0.00 < 0.05)
+sort                    time:   [186.54 ms 187.32 ms 188.16 ms]
+                        change: [+54123% +55014% +55834%] (p = 0.00 < 0.05)
                         Performance has regressed.
-Found 21 outliers among 100 measurements (21.00%)
-  21 (21.00%) high severe
+Found 2 outliers among 100 measurements (2.00%)
+  2 (2.00%) high mild
 ```
 
 ## 倒序
