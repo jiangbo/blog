@@ -14,7 +14,7 @@
 
 ## 示例
 
-### 实现
+### 递归实现
 
 ```rust
 fn merge_sort(data: &mut [i32]) {
