@@ -22,12 +22,11 @@ fn count_sort(data: &mut [i32]) {
     if let Some(max) = data.iter().max().map(|e| (e + 1) as usize) {
         let mut temp = vec![0; max];
         data.iter().for_each(|&e| temp[e as usize] += 1);
-        let mut j = 0;
-        for i in 0..max {
-            while temp[i as usize] > 0 {
-                data[j] = i as i32;
-                temp[i] -= 1;
-                j += 1;
+        let mut i = 0;
+        for (val, &num) in temp.iter().enumerate() {
+            for _ in 0..num {
+                data[i] = val as i32;
+                i += 1;
             }
         }
     }
