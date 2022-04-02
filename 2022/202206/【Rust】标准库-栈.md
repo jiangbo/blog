@@ -41,13 +41,13 @@ trait Stack<T> {
 使用标准库 Vec 来实现。
 
 ```rust
-struct VecStack<T> {
+struct MyStack<T> {
     vec: Vec<T>,
 }
 
-impl<T> Stack<T> for VecStack<T> {
+impl<T> Stack<T> for MyStack<T> {
     fn new() -> Self {
-        VecStack { vec: Vec::new() }
+        MyStack { vec: Vec::new() }
     }
 
     fn size(&self) -> usize {
@@ -76,7 +76,7 @@ impl<T> Stack<T> for VecStack<T> {
 
 ```rust
 fn main() {
-    let mut stack = VecStack::new();
+    let mut stack = MyStack::new();
     for i in 0..10 {
         stack.push(i);
     }
@@ -91,5 +91,3 @@ fn main() {
 标准库中的 Vec 内置支持栈结构。
 
 ## 附录
-
-[1]: images/count_sort.gif
