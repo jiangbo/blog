@@ -21,13 +21,13 @@
 
 ```rust
 type NodeRef<T> = Option<Box<Node<T>>>;
-struct Node<T: PartialOrd + Debug> {
+struct Node<T: Debug> {
     value: T,
     left: NodeRef<T>,
     right: NodeRef<T>,
 }
 
-impl<T: PartialOrd + Debug> Node<T> {
+impl<T: Debug> Node<T> {
     fn in_order(&self) {
         
         if let Some(left) = &self.left {
@@ -52,11 +52,11 @@ impl<T: PartialOrd + Debug> Node<T> {
 ### 二叉树定义
 
 ```rust
-struct BinaryTree<T: PartialOrd + Debug> {
+struct BinaryTree<T: Debug> {
     root: NodeRef<T>,
 }
 
-impl<T: PartialOrd + Debug> BinaryTree<T> {
+impl<T: Debug> BinaryTree<T> {
     fn new() -> Self {
         BinaryTree { root: None }
     }
