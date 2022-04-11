@@ -74,9 +74,9 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
     fn insert(&mut self, value: T) {
         let mut current = &mut self.root;
         while let Some(node) = current {
-            match value.cmp(&node.value) {
-                Ordering::Less => current = &mut node.left,
-                Ordering::Greater => current = &mut node.right,
+            current = match value.cmp(&node.value) {
+                Ordering::Less => &mut node.left,
+                Ordering::Greater => &mut node.right,
                 // 相等元素不插入
                 Ordering::Equal => return,
             };
