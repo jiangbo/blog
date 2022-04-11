@@ -14,6 +14,7 @@
 ### 特点
 
 相比较二叉树，二叉搜索树的左节点都比父节点小，右节点都比父节点大。
+使用递归的方式来实现二叉搜索树的节点检索。
 
 ## 示例
 
@@ -39,6 +40,18 @@ impl<T: Ord + Debug> Node<T> {
             right: None,
         }))
     }
+    fn search(&self, value: &T) -> bool {
+        let target = match value.cmp(&self.value) {
+            Ordering::Less => &self.left,
+            Ordering::Greater => &self.right,
+            Ordering::Equal => return true,
+        };
+
+        match target {
+            Some(node) => node.search(value),
+            None => false,
+        }
+    }
 }
 ```
 
@@ -57,61 +70,8 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
     fn new() -> Self {
         BinarySearchTree { root: None }
     }
-
-    fn in_order(&self) {
-        let (mut stack, mut current) = (Vec::new(), &self.root);
-        while current.is_some() || !stack.is_empty() {
-            while let Some(node) = current {
-                stack.push(current);
-                current = &node.left;
-            }
-            current = stack.pop().unwrap();
-            println!("{:?}", current.as_ref().unwrap().value);
-            current = &current.as_ref().unwrap().right;
-        }
-    }
-}
-```
-
-### 递归实现
-
-```rust
-impl<T: Ord + Debug> Node<T> {
-    fn search(&self, value: &T) -> bool {
-        let target = match value.cmp(&self.value) {
-            Ordering::Less => &self.left,
-            Ordering::Greater => &self.right,
-            Ordering::Equal => return true,
-        };
-
-        match target {
-            Some(node) => node.search(value),
-            None => false,
-        }
-    }
-}
-
-impl<T: Ord + Debug> BinarySearchTree<T> {
     fn search(&self, value: &T) -> bool {
         self.root.as_ref().map_or(false, |root| root.search(value))
-    }
-}
-```
-
-### 迭代实现
-
-```rust
-impl<T: Ord + Debug> BinarySearchTree<T> {
-    fn search(&self, value: &T) -> bool {
-        let mut current = &self.root;
-        while let Some(node) = current {
-            current = match value.cmp(&node.value) {
-                Ordering::Less => &node.left,
-                Ordering::Greater => &node.right,
-                Ordering::Equal => return true,
-            };
-        }
-        false
     }
 }
 ```
@@ -136,3 +96,86 @@ fn main() {
 实现了二叉搜索树的检索方法。
 
 ## 附录
+
+### 源码
+
+```rust
+use std::{cmp::Ordering, fmt::Debug};
+
+fn main() {
+    let mut tree = BinarySearchTree::new();
+    vec![44, 22, 11, 33, 66, 66, 55, 77]
+        .into_iter()
+        .for_each(|e| tree.insert(e));
+    tree.in_order();
+    println!("{:?}", tree.search(&88));
+    println!("{:?}", tree.search(&77));
+}
+
+type NodeRef<T> = Option<Box<Node<T>>>;
+struct Node<T: Ord + Debug> {
+    value: T,
+    left: NodeRef<T>,
+    right: NodeRef<T>,
+}
+
+impl<T: Ord + Debug> Node<T> {
+    fn new_node_ref(value: T) -> NodeRef<T> {
+        Some(Box::new(Node {
+            value,
+            left: None,
+            right: None,
+        }))
+    }
+    fn search(&self, value: &T) -> bool {
+        let target = match value.cmp(&self.value) {
+            Ordering::Less => &self.left,
+            Ordering::Greater => &self.right,
+            Ordering::Equal => return true,
+        };
+
+        match target {
+            Some(node) => node.search(value),
+            None => false,
+        }
+    }
+}
+
+struct BinarySearchTree<T: Ord + Debug> {
+    root: NodeRef<T>,
+}
+
+impl<T: Ord + Debug> BinarySearchTree<T> {
+    fn new() -> Self {
+        BinarySearchTree { root: None }
+    }
+
+    fn in_order(&self) {
+        let (mut stack, mut current) = (Vec::new(), &self.root);
+        while current.is_some() || !stack.is_empty() {
+            while let Some(node) = current {
+                stack.push(current);
+                current = &node.left;
+            }
+            current = stack.pop().unwrap();
+            println!("{:?}", current.as_ref().unwrap().value);
+            current = &current.as_ref().unwrap().right;
+        }
+    }
+    fn insert(&mut self, value: T) {
+        let mut current = &mut self.root;
+        while let Some(node) = current {
+            current = match value.cmp(&node.value) {
+                Ordering::Less => &mut node.left,
+                Ordering::Greater => &mut node.right,
+                // 相等元素不插入
+                Ordering::Equal => return,
+            };
+        }
+        *current = Node::new_node_ref(value)
+    }
+    fn search(&self, value: &T) -> bool {
+        self.root.as_ref().map_or(false, |root| root.search(value))
+    }
+}
+```
