@@ -58,14 +58,14 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
     fn new() -> Self {
         BinarySearchTree { root: None }
     }
-    fn max_or_min<F>(&self, f: F) -> Option<&T>
+    fn max_or_min<F>(&self, child: F) -> Option<&T>
     where
         F: Fn(&Box<Node<T>>) -> &NodeRef<T>,
     {
         let mut current = &self.root;
         while let Some(node) = current {
-            current = match f(node) {
-                Some(_) => f(node),
+            current = match child(node) {
+                Some(_) => child(node),
                 None => return Some(&node.value),
             }
         }
