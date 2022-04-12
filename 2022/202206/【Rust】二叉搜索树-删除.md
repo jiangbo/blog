@@ -1,3 +1,117 @@
+# 【Rust】二叉搜索树-删除
+
+## 环境
+
+- Time 2022-04-12
+- Rust 1.60.0
+
+## 前言
+
+### 说明
+
+基于标准库来学习各种数据结构，并不是从头实现数据结构，未考虑实现性能。
+
+### 特点
+
+相比较二叉树，二叉搜索树的左节点都比父节点小，右节点都比父节点大。
+使用迭代的方式删除二叉搜索树中的某个节点。
+
+## 示例
+
+### 节点定义
+
+```rust
+type NodeRef<T> = Option<Box<Node<T>>>;
+struct Node<T: Ord + Debug> {
+    value: T,
+    left: NodeRef<T>,
+    right: NodeRef<T>,
+}
+```
+
+### 节点实现
+
+```rust
+impl<T: Ord + Debug> Node<T> {
+    fn new_node_ref(value: T) -> NodeRef<T> {
+        Some(Box::new(Node {
+            value,
+            left: None,
+            right: None,
+        }))
+    }
+}
+```
+
+### 二叉搜索树定义
+
+```rust
+struct BinarySearchTree<T: Ord + Debug> {
+    root: NodeRef<T>,
+}
+```
+
+### 二叉搜索树实现
+
+```rust
+impl<T: Ord + Debug> BinarySearchTree<T> {
+    fn new() -> Self {
+        BinarySearchTree { root: None }
+    }
+
+    fn remove(&mut self, value: &T) {
+        let mut current = &mut self.root;
+        while let Some(node) = current {
+            match node.value.cmp(value) {
+                Ordering::Less => current = &mut current.as_mut().unwrap().right,
+                Ordering::Greater => current = &mut current.as_mut().unwrap().left,
+                Ordering::Equal => {
+                    match (node.left.as_mut(), node.right.as_mut()) {
+                        (None, None) => *current = None,
+                        (Some(_), None) => *current = node.left.take(),
+                        (None, Some(_)) => *current = node.right.take(),
+                        (Some(_), Some(_)) => {
+                            current.as_mut().unwrap().value =
+                                Node::get_min(&mut node.right).unwrap()
+                        }
+                    };
+                }
+            }
+        }
+    }
+}
+```
+
+### 使用示例
+
+```rust
+fn main() {
+    let mut tree = BinarySearchTree::new();
+    vec![44, 22, 11, 33, 66, 66, 55, 77]
+        .into_iter()
+        .for_each(|e| tree.insert(e));
+    tree.in_order();
+    println!("{:?}", tree.search(&88));
+    println!("{:?}", tree.search(&77));
+    println!("{:?}", tree.max());
+    println!("{:?}", tree.min());
+    println!("{:?}", tree.get_max());
+    println!("{:?}", tree.get_min());
+    tree.in_order();
+    tree.remove(&44);
+    tree.in_order();
+}
+```
+
+## 总结
+
+使用迭代的方式实现了删除二叉搜索树中节点的方法。
+
+## 附录
+
+### 源码
+
+```rust
 use std::{cmp::Ordering, fmt::Debug};
 
 fn main() {
@@ -12,6 +126,8 @@ fn main() {
     println!("{:?}", tree.min());
     println!("{:?}", tree.get_max());
     println!("{:?}", tree.get_min());
+    tree.in_order();
+    tree.remove(&44);
     tree.in_order();
 }
 
@@ -133,28 +249,25 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
         Node::get_min(&mut self.root)
     }
 
-    fn remove(&mut self, value: &T) -> Option<T> {
+    fn remove(&mut self, value: &T) {
         let mut current = &mut self.root;
-        while let Some(node) = current.as_mut() {
-            current = match node.value.cmp(value) {
-                Ordering::Less => &mut current,
-                Ordering::Greater => &mut node.left,
-                Ordering::Equal => break,
+        while let Some(node) = current {
+            match node.value.cmp(value) {
+                Ordering::Less => current = &mut current.as_mut().unwrap().right,
+                Ordering::Greater => current = &mut current.as_mut().unwrap().left,
+                Ordering::Equal => {
+                    match (node.left.as_mut(), node.right.as_mut()) {
+                        (None, None) => *current = None,
+                        (Some(_), None) => *current = node.left.take(),
+                        (None, Some(_)) => *current = node.right.take(),
+                        (Some(_), Some(_)) => {
+                            current.as_mut().unwrap().value =
+                                Node::get_min(&mut node.right).unwrap()
+                        }
+                    };
+                }
             }
         }
-
-        let mut node = current.take()?;
-
-        *current = match (node.left.as_mut(), node.right.as_mut()) {
-            (None, None) => None,
-            (Some(_), None) => node.left.take(),
-            (None, Some(_)) => node.right.take(),
-            (Some(_), Some(_)) => {
-                Node::get_max(&mut node.right);
-                None
-            }
-        };
-
-        None
     }
 }
+```

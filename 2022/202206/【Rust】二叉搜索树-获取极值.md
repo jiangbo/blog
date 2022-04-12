@@ -58,40 +58,52 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
     fn new() -> Self {
         BinarySearchTree { root: None }
     }
+
+    fn get_max(&mut self) -> Option<T> {
+        Node::get_max(&mut self.root)
+    }
+
+    fn get_min(&mut self) -> Option<T> {
+        Node::get_min(&mut self.root)
+    }
 }
 ```
 
 ### 最大值
 
 ```rust
-fn get_max(&mut self) -> Option<T> {
-    let mut current = &mut self.root;
-    while let Some(node) = current {
-        current = match node.right {
-            Some(_) => &mut current.as_mut().unwrap().right,
-            None => break,
+impl<T: Ord + Debug> Node<T> {
+    fn get_max(root: &mut NodeRef<T>) -> Option<T> {
+        let mut current = root;
+        while let Some(node) = current {
+            current = match node.right {
+                Some(_) => &mut current.as_mut().unwrap().right,
+                None => break,
+            }
         }
+        let node = current.take()?;
+        *current = node.left;
+        Some(node.value)
     }
-    let node = current.take()?;
-    *current = node.left;
-    Some(node.value)
 }
 ```
 
 ### 最小值
 
 ```rust
-fn get_min(&mut self) -> Option<T> {
-    let mut current = &mut self.root;
-    while let Some(node) = current {
-        current = match node.left {
-            Some(_) => &mut current.as_mut().unwrap().left,
-            None => break,
+impl<T: Ord + Debug> Node<T> {
+    fn get_min(root: &mut NodeRef<T>) -> Option<T> {
+        let mut current = root;
+        while let Some(node) = current {
+            current = match node.left {
+                Some(_) => &mut current.as_mut().unwrap().left,
+                None => break,
+            }
         }
+        let node = current.take()?;
+        *current = node.right;
+        Some(node.value)
     }
-    let node = current.take()?;
-    *current = node.right;
-    Some(node.value)
 }
 ```
 
@@ -154,6 +166,32 @@ impl<T: Ord + Debug> Node<T> {
             left: None,
             right: None,
         }))
+    }
+
+    fn get_max(root: &mut NodeRef<T>) -> Option<T> {
+        let mut current = root;
+        while let Some(node) = current {
+            current = match node.right {
+                Some(_) => &mut current.as_mut().unwrap().right,
+                None => break,
+            }
+        }
+        let node = current.take()?;
+        *current = node.left;
+        Some(node.value)
+    }
+
+    fn get_min(root: &mut NodeRef<T>) -> Option<T> {
+        let mut current = root;
+        while let Some(node) = current {
+            current = match node.left {
+                Some(_) => &mut current.as_mut().unwrap().left,
+                None => break,
+            }
+        }
+        let node = current.take()?;
+        *current = node.right;
+        Some(node.value)
     }
 }
 
@@ -225,29 +263,11 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
     }
 
     fn get_max(&mut self) -> Option<T> {
-        let mut current = &mut self.root;
-        while let Some(node) = current {
-            current = match node.right {
-                Some(_) => &mut current.as_mut().unwrap().right,
-                None => break,
-            }
-        }
-        let node = current.take()?;
-        *current = node.left;
-        Some(node.value)
+        Node::get_max(&mut self.root)
     }
 
     fn get_min(&mut self) -> Option<T> {
-        let mut current = &mut self.root;
-        while let Some(node) = current {
-            current = match node.left {
-                Some(_) => &mut current.as_mut().unwrap().left,
-                None => break,
-            }
-        }
-        let node = current.take()?;
-        *current = node.right;
-        Some(node.value)
+        Node::get_min(&mut self.root)
     }
 }
 ```
