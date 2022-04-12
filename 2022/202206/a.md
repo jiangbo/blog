@@ -1,4 +1,4 @@
-use std::{cmp::Ordering, fmt::Debug, ptr::NonNull};
+use std::{cmp::Ordering, fmt::Debug};
 
 fn main() {
     let mut tree = BinarySearchTree::new();
@@ -133,22 +133,28 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
         Node::get_min(&mut self.root)
     }
 
-    fn remove(&mut self, value: &T) {
-        let mut current = self.root;
-        while let Some(ref mut node) = current {
+    fn remove(&mut self, value: &T) -> Option<T> {
+        let mut current = &mut self.root;
+        while let Some(node) = current.as_mut() {
             current = match node.value.cmp(value) {
-                Ordering::Less => node.right,
-                Ordering::Greater => node.left,
-                Ordering::Equal => match (node.left.take(), node.right.take()) {
-                    (None, None) => None,
-                    (Some(left), None) => Some(left),
-                    (None, Some(right)) => Some(right),
-                    (Some(_), Some(_)) => {
-                        node.value = Node::get_max(&mut current).unwrap();
-                        None
-                    }
-                },
+                Ordering::Less => &mut current,
+                Ordering::Greater => &mut node.left,
+                Ordering::Equal => break,
             }
         }
+
+        let mut node = current.take()?;
+
+        *current = match (node.left.as_mut(), node.right.as_mut()) {
+            (None, None) => None,
+            (Some(_), None) => node.left.take(),
+            (None, Some(_)) => node.right.take(),
+            (Some(_), Some(_)) => {
+                Node::get_max(&mut node.right);
+                None
+            }
+        };
+
+        None
     }
 }
