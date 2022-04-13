@@ -77,7 +77,7 @@ impl<T: Ord + Debug> Node<T> {
         let mut current = root;
         while let Some(node) = current {
             current = match node.right {
-                Some(_) => &mut current.as_mut().unwrap().right,
+                Some(_) => &mut current.as_mut()?.right,
                 None => break,
             }
         }
@@ -96,7 +96,7 @@ impl<T: Ord + Debug> Node<T> {
         let mut current = root;
         while let Some(node) = current {
             current = match node.left {
-                Some(_) => &mut current.as_mut().unwrap().left,
+                Some(_) => &mut current.as_mut()?.left,
                 None => break,
             }
         }
@@ -172,7 +172,7 @@ impl<T: Ord + Debug> Node<T> {
         let mut current = root;
         while let Some(node) = current {
             current = match node.right {
-                Some(_) => &mut current.as_mut().unwrap().right,
+                Some(_) => &mut current.as_mut()?.right,
                 None => break,
             }
         }
@@ -185,7 +185,7 @@ impl<T: Ord + Debug> Node<T> {
         let mut current = root;
         while let Some(node) = current {
             current = match node.left {
-                Some(_) => &mut current.as_mut().unwrap().left,
+                Some(_) => &mut current.as_mut()?.left,
                 None => break,
             }
         }
