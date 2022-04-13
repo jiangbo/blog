@@ -53,6 +53,8 @@ struct BinarySearchTree<T: Ord + Debug> {
 
 ### 二叉搜索树实现
 
+不返回删除的节点
+
 ```rust
 impl<T: Ord + Debug> BinarySearchTree<T> {
     fn new() -> Self {
@@ -79,6 +81,66 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
             }
         }
     }
+}
+```
+
+### 删除1
+
+返回删除的节点，并且不新增节点，复用之前的节点。
+
+```rust
+fn remove(&mut self, value: &T) -> Option<T> {
+    let mut current = &mut self.root;
+    while let Some(node) = current {
+        current = match node.value.cmp(value) {
+            Ordering::Less => &mut current.as_mut()?.right,
+            Ordering::Greater => &mut current.as_mut()?.left,
+            Ordering::Equal => break,
+        }
+    }
+
+    let mut node = current.take()?;
+    *current = match (node.left.as_ref(), node.right.as_ref()) {
+        (None, None) => None,
+        (Some(_), None) => node.left.take(),
+        (None, Some(_)) => node.right.take(),
+        (Some(_), Some(_)) => {
+            let old = replace(&mut node.value, Node::get_min(&mut node.right)?);
+            *current = Some(node);
+            return Some(old);
+        }
+    };
+    Some(node.value)
+}
+```
+
+### 删除2
+
+返回删除的节点，新增一个节点。
+
+```rust
+fn remove(&mut self, value: &T) -> Option<T> {
+    let mut current = &mut self.root;
+    while let Some(node) = current {
+        current = match node.value.cmp(value) {
+            Ordering::Less => &mut current.as_mut()?.right,
+            Ordering::Greater => &mut current.as_mut()?.left,
+            Ordering::Equal => break,
+        }
+    }
+
+    let mut node = current.take()?;
+    *current = match (node.left.as_ref(), node.right.as_ref()) {
+        (None, None) => None,
+        (Some(_), None) => node.left.take(),
+        (None, Some(_)) => node.right.take(),
+        (Some(_), Some(_)) => Some(Box::new(Node {
+            value: Node::get_min(&mut node.right)?,
+            left: node.left.take(),
+            right: node.right.take(),
+        })),
+    };
+    Some(node.value)
 }
 ```
 
@@ -127,7 +189,7 @@ fn main() {
     println!("{:?}", tree.get_max());
     println!("{:?}", tree.get_min());
     tree.in_order();
-    tree.remove(&44);
+    println!("{:?}", tree.remove(&44));
     tree.in_order();
 }
 
@@ -151,7 +213,7 @@ impl<T: Ord + Debug> Node<T> {
         let mut current = root;
         while let Some(node) = current {
             current = match node.right {
-                Some(_) => &mut current.as_mut().unwrap().right,
+                Some(_) => &mut current.as_mut()?.right,
                 None => break,
             }
         }
@@ -164,7 +226,7 @@ impl<T: Ord + Debug> Node<T> {
         let mut current = root;
         while let Some(node) = current {
             current = match node.left {
-                Some(_) => &mut current.as_mut().unwrap().left,
+                Some(_) => &mut current.as_mut()?.left,
                 None => break,
             }
         }
@@ -249,25 +311,28 @@ impl<T: Ord + Debug> BinarySearchTree<T> {
         Node::get_min(&mut self.root)
     }
 
-    fn remove(&mut self, value: &T) {
+    fn remove(&mut self, value: &T) -> Option<T> {
         let mut current = &mut self.root;
         while let Some(node) = current {
-            match node.value.cmp(value) {
-                Ordering::Less => current = &mut current.as_mut().unwrap().right,
-                Ordering::Greater => current = &mut current.as_mut().unwrap().left,
-                Ordering::Equal => {
-                    match (node.left.as_mut(), node.right.as_mut()) {
-                        (None, None) => *current = None,
-                        (Some(_), None) => *current = node.left.take(),
-                        (None, Some(_)) => *current = node.right.take(),
-                        (Some(_), Some(_)) => {
-                            current.as_mut().unwrap().value =
-                                Node::get_min(&mut node.right).unwrap()
-                        }
-                    };
-                }
+            current = match node.value.cmp(value) {
+                Ordering::Less => &mut current.as_mut()?.right,
+                Ordering::Greater => &mut current.as_mut()?.left,
+                Ordering::Equal => break,
             }
         }
+
+        let mut node = current.take()?;
+        *current = match (node.left.as_ref(), node.right.as_ref()) {
+            (None, None) => None,
+            (Some(_), None) => node.left.take(),
+            (None, Some(_)) => node.right.take(),
+            (Some(_), Some(_)) => Some(Box::new(Node {
+                value: Node::get_min(&mut node.right)?,
+                left: node.left.take(),
+                right: node.right.take(),
+            })),
+        };
+        Some(node.value)
     }
 }
 ```
