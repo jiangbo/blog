@@ -59,13 +59,13 @@ impl<T: Ord> Heap<T> for MyHeap<T> {
     fn insert(&mut self, value: T) {
         self.vec.push(value);
         let mut idx = self.vec.len() - 1;
-        let mut pdx;
         while idx > 0 {
-            pdx = (idx - 1) / 2;
-            if self.get(idx) > self.get(pdx) {
-                self.vec.swap(idx, pdx);
-                idx = pdx;
+            let pdx = (idx - 1) / 2;
+            match self.get(idx) > self.get(pdx) {
+                true => self.vec.swap(idx, pdx),
+                false => return,
             }
+            idx = pdx;
         }
     }
 
