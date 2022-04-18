@@ -6,9 +6,20 @@ fn main() {
     tree.pre_order();
     println!();
     tree.in_order();
+    println!();
+    tree.remove(&0);
+    tree.pre_order();
+    println!();
+    tree.in_order();
+    println!("remove 2");
+    tree.remove(&2);
+    tree.pre_order();
+    println!();
+    tree.in_order();
 }
 
 type NodeRef<T> = Option<Box<Node<T>>>;
+#[derive(Debug)]
 struct Node<T: Ord + Debug> {
     value: T,
     left: NodeRef<T>,
@@ -86,7 +97,7 @@ impl<T: Ord + Debug> Node<T> {
         let left = Node::height(&node.left);
         let right = Node::height(&node.right);
         let rebalance_factor = left as i8 - right as i8;
-
+        println!("rebalance_factor:{rebalance_factor}");
         if rebalance_factor == 2 {
             let left = node.left.as_mut().unwrap();
             let left_left = Node::height(&left.left);
@@ -107,6 +118,36 @@ impl<T: Ord + Debug> Node<T> {
             }
             Node::left_rotate(tree);
         }
+    }
+
+    fn remove(root: &mut NodeRef<T>, value: &T) -> Option<T> {
+        let node = root.as_mut()?;
+        let temp = match node.value.cmp(value) {
+            Ordering::Less => &mut node.right,
+            Ordering::Greater => &mut node.left,
+            Ordering::Equal => return Self::remove_node(root),
+        };
+        println!("temp:{:?}", temp);
+        let result = Node::remove(temp, value);
+        if temp.is_some() {
+            Self::rebalance(temp);
+        }
+        result
+    }
+
+    fn remove_node(root: &mut NodeRef<T>) -> Option<T> {
+        let mut node = root.take()?;
+        *root = match (node.left.as_ref(), node.right.as_ref()) {
+            (None, None) => None,
+            (Some(_), None) => node.left.take(),
+            (None, Some(_)) => node.right.take(),
+            (Some(_), Some(_)) => Some(Box::new(Node {
+                value: Node::get_min(&mut node.right)?,
+                left: node.left.take(),
+                right: node.right.take(),
+            })),
+        };
+        Some(node.value)
     }
 }
 
@@ -208,26 +249,10 @@ impl<T: Ord + Debug> AVLTree<T> {
     }
 
     fn remove(&mut self, value: &T) -> Option<T> {
-        let mut current = &mut self.root;
-        while let Some(node) = current {
-            current = match node.value.cmp(value) {
-                Ordering::Less => &mut current.as_mut()?.right,
-                Ordering::Greater => &mut current.as_mut()?.left,
-                Ordering::Equal => break,
-            }
+        let result = Node::remove(&mut self.root, value);
+        if self.root.is_some() {
+            Node::rebalance(&mut self.root);
         }
-
-        let mut node = current.take()?;
-        *current = match (node.left.as_ref(), node.right.as_ref()) {
-            (None, None) => None,
-            (Some(_), None) => node.left.take(),
-            (None, Some(_)) => node.right.take(),
-            (Some(_), Some(_)) => Some(Box::new(Node {
-                value: Node::get_min(&mut node.right)?,
-                left: node.left.take(),
-                right: node.right.take(),
-            })),
-        };
-        Some(node.value)
+        result
     }
 }
