@@ -144,6 +144,37 @@ fn remove(&mut self, value: &T) -> Option<T> {
 }
 ```
 
+### 删除3
+
+迭代删除方式
+
+```rust
+fn remove(tree: &mut NodeRef<T>, value: &T) -> Option<T> {
+    let node = tree.as_mut()?;
+    let current = match node.value.cmp(value) {
+        Ordering::Less => &mut node.right,
+        Ordering::Greater => &mut node.left,
+        Ordering::Equal => return Node::remove_node(tree),
+    };
+    Node::remove(current, value)
+}
+
+fn remove_node(target: &mut NodeRef<T>) -> Option<T> {
+    let mut node = target.take()?;
+    *target = match (node.left.as_ref(), node.right.as_ref()) {
+        (None, None) => None,
+        (Some(_), None) => node.left.take(),
+        (None, Some(_)) => node.right.take(),
+        (Some(_), Some(_)) => Some(Box::new(Node {
+            value: Node::get_min(&mut node.right)?,
+            left: node.left.take(),
+            right: node.right.take(),
+        })),
+    };
+    Some(node.value)
+}
+```
+
 ### 使用示例
 
 ```rust
