@@ -90,6 +90,15 @@ pub mod tree;
 ### mod.rs 源码
 
 ```rust
+pub trait Tree<T> {
+    fn pre_order(&self) -> Vec<&T>;
+    fn in_order(&self) -> Vec<&T>;
+    fn post_order(&self) -> Vec<&T>;
+    fn insert(&mut self, value: T);
+    fn remove(&mut self, value: &T) -> Option<T>;
+    fn contains(&mut self, value: &T) -> bool;
+}
+
 type NodeRef<T> = Option<Box<Node<T>>>;
 pub(crate) struct Node<T> {
     value: T,
