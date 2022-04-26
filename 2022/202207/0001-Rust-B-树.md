@@ -99,7 +99,7 @@ fn main() {
 fn main() {
     let mut map = BTreeMap::new();
     map.insert("name", "JiangBo");
-    println!("name:{:?}", map.get_key_value("name"));
+    println!("{:?}", map.get_key_value("name"));
 }
 ```
 
