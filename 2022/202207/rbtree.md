@@ -60,28 +60,100 @@ impl<T: Ord> RedBlackTree<T> {
     }
 
     unsafe fn fix_insert(node: &mut NodeRef<T>) {
-        if Self::has_parent(node) {
-            node.as_mut().unwrap().color = Color::Black;
-            return;
-        }
-        let parent = &mut *node.as_mut().unwrap().parent;
-        if let Color::Black = parent.as_ref().unwrap().color {
-            return;
+        let parent = Self::parent(node);
+        match parent {
+            // 没有父节点，表明当前是根节点，只需要将节点染黑
+            None => node.as_mut().unwrap().color = Color::Black,
+            // 有父节点
+            Some(parent) => {
+                // 父节点是黑色的，所有红黑树的规则都满足，不需要处理。
+                // 父节点是红色的，则祖父节点必然存在，因为红色节点不能是根节点
+                if let Color::Red = (*parent).as_ref().unwrap().color {
+                    let uncle = Self::brother(parent);
+                    if !uncle.is_null() {
+                        match (*uncle).as_ref().unwrap().color {
+                            Color::Red => {
+                                // 如果是红色的叔叔节点，需要将祖父节点染红，父和叔节点染黑
+                                Self::set_color(parent, Color::Black);
+                                Self::set_color(uncle, Color::Black);
+                                let grandparent = Self::parent(parent).unwrap();
+                                Self::set_color(grandparent, Color::Red);
+                            }
+                            // 祖父、父亲、叔父都是黑色
+                            Color::Black => Self::fix_black_uncle(node),
+                        }
+                    }
+                }
+            }
         }
     }
 
-    fn has_parent(node: &NodeRef<T>) -> bool {
-        match node {
-            Some(node) => !node.parent.is_null(),
+    unsafe fn fix_black_uncle(node: &mut NodeRef<T>) {
+        let p = Self::parent(node).unwrap();
+        let g = Self::parent(p).unwrap();
+        let left: *mut NodeRef<T> = &mut (*g).as_mut().unwrap().left;
+
+        if Self::is_left_child(g, p) {
+            // 祖父的左节点是父节点
+            if Self::is_left_child(p, node) {
+                // 父亲的左节点是当前孩子节点(LL)
+            }
+        }
+    }
+
+    unsafe fn parent(node: *mut NodeRef<T>) -> Option<*mut NodeRef<T>> {
+        let node = node.as_mut()?;
+        match node.as_ref().unwrap().parent.is_null() {
+            true => None,
+            false => Some(node.as_ref().unwrap().parent),
+        }
+    }
+    unsafe fn brother(p: *mut NodeRef<T>) -> *mut NodeRef<T> {
+        let g = &mut *Self::parent(p).unwrap();
+        match &g.as_ref().unwrap().left {
+            None => &mut g.as_mut().unwrap().left,
+            Some(l) => match l.value == (*p).as_ref().unwrap().value {
+                false => &mut g.as_mut().unwrap().left,
+                true => &mut g.as_mut().unwrap().right,
+            },
+        }
+    }
+
+    unsafe fn set_color(node: *mut NodeRef<T>, color: Color) {
+        (*node).as_mut().unwrap().color = color
+    }
+
+    unsafe fn is_left_child(parent: *mut NodeRef<T>, child: *mut NodeRef<T>) -> bool {
+        let parent = (*parent).as_ref().unwrap();
+
+        match &parent.left {
             None => false,
+            Some(left) => {
+                let child = (*child).as_ref().unwrap();
+                left.value == child.value
+            }
         }
     }
 
-    unsafe fn uncle(node: &NodeRef<T>) -> &NodeRef<T> {
-        let parent = &*node.as_ref().unwrap().parent;
-        let grandparent = &*parent.as_ref().unwrap().parent;
-        let left = grandparent.as_ref().unwrap().left;
-        let right = grandparent.as_ref().unwrap().right;
+    fn left_rotate(root: &mut NodeRef<T>) {
+        if let Some(mut node) = root.take() {
+            if let Some(mut new_root) = node.right.take() {
+                node.right = new_root.left.take();
+                new_root.left = Some(node);
+                *root = Some(new_root);
+            }
+        }
+    }
+
+    fn right_rotate(tree: *mut NodeRef<T>) {
+        let root = unsafe { &mut *tree };
+        if let Some(mut node) = root.take() {
+            if let Some(mut new_root) = node.left.take() {
+                node.left = new_root.right.take();
+                new_root.right = Some(node);
+                *root = Some(new_root);
+            }
+        }
     }
 }
 
