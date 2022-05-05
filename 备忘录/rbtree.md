@@ -532,3 +532,303 @@ mod tests {
         println!("{:?}", tree.pre_order());
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+use std::cell::{RefCell, RefMut};
+use std::cmp::Ordering;
+use std::rc::{Rc, Weak};
+
+use super::Tree;
+
+pub enum Color {
+    Red,
+    Black,
+}
+
+struct Node<T> {
+    value: T,
+    color: Color,
+    parent: Parent<T>,
+    left: Child<T>,
+    right: Child<T>,
+}
+
+impl<T> Node<T> {
+    fn new_black_child(value: T) -> Child<T> {
+        Self::new_child(value, Color::Black, None)
+    }
+
+    fn from_child(value: T, parent: Child<T>) -> Child<T> {
+        let parent = Rc::downgrade(parent.as_ref()?);
+        Self::new_child(value, Color::Red, Some(parent))
+    }
+
+    // fn from_parent(value: T, parent: Parent<T>) -> Child<T> {
+    //     Self::new_child(value, Color::Red, parent)
+    // }
+
+    fn new_child(value: T, color: Color, parent: Parent<T>) -> Child<T> {
+        Some(Rc::new(RefCell::new(Node {
+            value,
+            color,
+            parent,
+            left: None,
+            right: None,
+        })))
+    }
+}
+
+type Child<T> = Option<Rc<RefCell<Node<T>>>>;
+type Parent<T> = Option<Weak<RefCell<Node<T>>>>;
+
+#[derive(Default)]
+pub struct RedBlackTree<T: Ord> {
+    root: Child<T>,
+}
+
+impl<T: Ord> Tree<T> for RedBlackTree<T> {
+    fn pre_order(&self) -> Vec<&T> {
+        todo!()
+    }
+
+    fn in_order(&self) -> Vec<&T> {
+        todo!()
+    }
+
+    fn post_order(&self) -> Vec<&T> {
+        todo!()
+    }
+
+    fn insert(&mut self, value: T) {
+        let mut parent = None;
+        let mut current = self.root.clone();
+
+        while let Some(node) = current {
+            parent = Some(node.clone());
+            let node = node.as_ref().borrow();
+            current = match value.cmp(&node.value) {
+                Ordering::Less => node.left.clone(),
+                Ordering::Greater => node.right.clone(),
+                Ordering::Equal => return,
+            };
+        }
+
+        match &parent {
+            None => self.root = Node::new_black_child(value),
+            Some(node) => {
+                let mut node = node.as_ref().borrow_mut();
+                let flag = node.value > value;
+                let new = Node::from_child(value, parent.clone());
+                match flag {
+                    true => node.left = new.clone(),
+                    false => node.right = new.clone(),
+                };
+                current = new;
+            }
+        }
+        drop(parent);
+        self.fix_insert(&current);
+    }
+    fn remove(&mut self, _: &T) -> Option<T> {
+        todo!()
+    }
+
+    fn contains(&mut self, value: &T) -> bool {
+        todo!()
+    }
+}
+
+impl<T: Ord> RedBlackTree<T> {
+    fn set_color(node: &Child<T>, color: Color) {
+        if let Some(node) = node {
+            node.borrow_mut().color = color;
+        }
+    }
+
+    fn parent(node: &Child<T>) -> Child<T> {
+        node.clone()
+            .as_ref()?
+            .as_ref()
+            .borrow()
+            .parent
+            .as_ref()?
+            .upgrade()
+    }
+
+    fn brother(node: &Child<T>) -> Child<T> {
+        let parent = &Self::parent(node);
+
+        if parent.is_none() || node.is_none() {
+            return None;
+        }
+
+        let p = parent.as_ref().unwrap().as_ref().borrow();
+        match Self::is_left_child(parent, node) {
+            true => p.right.clone(),
+            false => p.left.clone(),
+        }
+    }
+
+    fn is_left_child(parent: &Child<T>, child: &Child<T>) -> bool {
+        !Self::is_right_child(parent, child)
+    }
+
+    fn is_right_child(parent: &Child<T>, child: &Child<T>) -> bool {
+        if parent.is_none() || child.is_none() {
+            return false;
+        }
+
+        let parent = &parent.as_ref().unwrap().as_ref().borrow().value;
+        let child = &child.as_ref().unwrap().as_ref().borrow().value;
+        parent == child
+    }
+
+    // fn left_child(tree: &Child<T>) -> Child<T> {
+    //     tree.as_ref()?.as_ref().borrow().left.clone()
+    // }
+
+    // fn left_child_node(tree: &Child<T>) -> Child<T> {
+    //     tree.as_ref()?.as_ref().borrow().left.clone()
+    // }
+
+    // fn right_child(tree: &Child<T>) -> Child<T> {
+    //     tree.as_ref()?.as_ref().borrow().right.clone()
+    // }
+
+    // fn right_child_node(tree: &Child<T>) -> Child<T> {
+    //     tree.as_ref()?.as_ref().borrow().right.clone()
+    // }
+
+    fn node_mut(tree: &Child<T>) -> RefMut<Node<T>> {
+        tree.as_ref().unwrap().as_ref().borrow_mut()
+    }
+
+    fn left_rotate(tree: &Child<T>) {
+        if let Some(root1) = tree {
+            let mut root2 = root1.as_ref().borrow_mut();
+            let right1 = root2.right.clone();
+            let parent = root2.parent.clone();
+            if let Some(right2) = &right1 {
+                let mut right3 = right2.as_ref().borrow_mut();
+                root2.parent = Some(Rc::downgrade(right2));
+                root2.right = right3.left.clone();
+                right3.left = tree.clone();
+                right2.swap(root1);
+                right3.parent = parent;
+                if right3.left.is_some() {
+                    Self::node_mut(&right3.left).parent = Some(Rc::downgrade(root1));
+                }
+            }
+        }
+    }
+
+    fn right_rotate(tree: &Child<T>) {
+        if let Some(root1) = tree {
+            let mut root2 = root1.as_ref().borrow_mut();
+            let left1 = root2.left.clone();
+            let parent = root2.parent.clone();
+            if let Some(left2) = &left1 {
+                let mut left3 = left2.as_ref().borrow_mut();
+                root2.parent = Some(Rc::downgrade(left2));
+                root2.left = left3.right.clone();
+                left3.right = tree.clone();
+                left2.swap(root1);
+                left3.parent = parent;
+                if left3.right.is_some() {
+                    Self::node_mut(&left3.right).parent = Some(Rc::downgrade(root1));
+                }
+            }
+        }
+    }
+
+    // fix red black tree insert
+    fn fix_insert(&mut self, node: &Child<T>) {
+        let p = &Self::parent(node);
+
+        if p.is_none() {
+            // 没有父节点，表明当前是根节点，只需要将节点染黑
+            Self::set_color(p, Color::Black);
+            return;
+        }
+
+        // 有父节点
+        {
+            let color = &p.as_ref().unwrap().as_ref().borrow().color;
+            if matches!(color, Color::Black) {
+                // 父节点是黑色的，所有红黑树的规则都满足，不需要处理。
+                return;
+            }
+        }
+
+        // 父节点是红色的，则祖父节点必然存在，检查叔叔节点
+        match &Self::brother(p) {
+            None => Self::fix_black_uncle(node),
+            Some(uncle) => {
+                match uncle.as_ref().borrow().color {
+                    Color::Red => Self::fix_red_uncle(p),
+                    // 祖父、父亲、叔父都是黑色
+                    Color::Black => Self::fix_black_uncle(node),
+                }
+            }
+        }
+    }
+
+    fn fix_red_uncle(parent: &Child<T>) {
+        // 如果是红色的叔叔节点，需要将祖父节点染红，父和叔节点染黑
+        Self::set_color(parent, Color::Black);
+        Self::set_color(&Self::brother(parent), Color::Black);
+        Self::set_color(&Self::parent(parent), Color::Red);
+    }
+    fn fix_black_uncle(node: &Child<T>) {
+        let p = &Self::parent(node);
+        let g = &Self::parent(p);
+
+        if Self::is_left_child(g, p) {
+            // 祖父的左节点是父节点
+            if Self::is_right_child(p, node) {
+                // 父亲的右节点是当前孩子节点(LR)，左旋成(LL)
+                Self::left_rotate(p);
+            }
+            // 父亲的左节点是当前孩子节点(LL)
+            Self::right_rotate(g);
+            Self::set_color(g, Color::Black);
+            Self::set_color(p, Color::Red);
+        } else {
+            // 祖父的右节点是父节点
+            if Self::is_left_child(p, node) {
+                // 父亲的左节点是当前孩子节点(RL)，右旋成(RR)
+                Self::right_rotate(p);
+            }
+            // 父亲的右节点是当前孩子节点(RR)
+            Self::left_rotate(g);
+            Self::set_color(g, Color::Black);
+            Self::set_color(p, Color::Red);
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn rbtree_插入() {
+        let mut tree = RedBlackTree::default();
+        (0..5).for_each(|e| tree.insert(e));
+        assert!(tree.in_order().windows(2).all(|w| w[0] <= w[1]));
+        println!("{:?}", tree.pre_order());
+    }
+}
