@@ -59,8 +59,6 @@ fn main() {
 
 ### select_nth_unstable
 
-切割后缀，如果没有匹配后缀返回 None，否则返回 Some。
-
 ```rust
 fn main() {
     let mut arr = [-5i32, 4, 1, -3, 2];
