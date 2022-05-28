@@ -52,7 +52,7 @@ pub fn split_off(&mut self, at: usize) -> Bytes {
 
 ## split_to
 
-`split_off` 是把后面的切割下来，前面的保留，而 `split_to` 相反，。
+`split_off` 是把后面的切割下来，前面的保留，而 `split_to` 相反。
 
 ```rust
 pub fn split_to(&mut self, at: usize) -> Bytes {
