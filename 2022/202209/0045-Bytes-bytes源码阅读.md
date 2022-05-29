@@ -10,7 +10,7 @@
 
 ### 说明
 
-参考：<https://github.com/tokio-rs/bytes>
+参考：<https://docs.rs/bytes/latest/bytes/struct.Bytes.html>
 
 ### 目标
 
