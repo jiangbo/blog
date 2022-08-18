@@ -120,7 +120,7 @@ impl App {
 
 使用 `tui-rs` 渲染 Canvas。
 
-[1]:images/tui-canvas.git
+[1]:images/tui-canvas.gif
 
 ## 附录
 
