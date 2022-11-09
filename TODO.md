@@ -8,6 +8,16 @@ git-bash 命令行：find . -type f -exec dos2unix {} \;
 
 ### 汇编
 
+* jmp 跳转指令
+* 查看启动的第一条指令
+
+1. 显示 H
+2. 单个显示Hello world
+3. 做1位加法，显示结果
+4. 做简单除法
+5. 做多位数分解
+6. 做多位数加法
+
 ### 操作系统
 
 ### linux + rust
