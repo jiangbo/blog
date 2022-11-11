@@ -1,4 +1,4 @@
-# 0170-Multiboot2 启动规范
+# 0170-Multiboot2 启动头
 
 ## 环境
 
