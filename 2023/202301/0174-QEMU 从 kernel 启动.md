@@ -65,14 +65,14 @@ root@jiangbo12490:~/git/game# ld -T linker.ld -m elf_i386 boot.o  -o kernel.elf
 ## 启动 QEMU
 
 ```sh
-qemu-system-x86_64 -kernel kernel.elf -display curses -S -s
+qemu-system-x86_64 -kernel kernel.elf -display curses
 ```
 
 可以看到和之前的制作的 ISO 文件启动效果一样。
 
 ## 总结
 
-创建了一个内核可执行程序 kernel.bin，并且制作成 ISO 镜像，在 QEMU 中运行。
+创建了一个内核可执行程序 kernel.elf，直接从 QEMU 中启动。
 
 ## 附录
 
