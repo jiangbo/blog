@@ -6,15 +6,21 @@ git-bash 命令行：find . -type f -exec dos2unix {} \;
 
 ## TODO
 
-### 汇编
-
 ### 操作系统
+
+等 blog os 第三版
 
 ### elf 文件解析
 
+《编译，链接》，优先级可以放后面，因为不使用。
+
 ### linux + rust
 
+等再稳定点
+
 ### linux 性能优化
+
+后面看
 
 ### es
 
@@ -34,9 +40,6 @@ git-bash 命令行：find . -type f -exec dos2unix {} \;
 
 ### docker + wasm
 
-### vim
+等稳定版本
 
 ### 编译原理
-
-压栈和出栈
-调用过程
