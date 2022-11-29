@@ -9,7 +9,7 @@
 
 ### 说明
 
-参考：<<https://github.com/leandromoreira/linux-network-performance-parameters>
+参考：<https://github.com/leandromoreira/linux-network-performance-parameters>
 
 ### 目标
 

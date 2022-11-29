@@ -36,8 +36,6 @@ git-bash 命令行：find . -type f -exec dos2unix {} \;
 
 ### build docker
 
-### 实现TCP
-
 ### docker + wasm
 
 等稳定版本
@@ -45,5 +43,3 @@ git-bash 命令行：find . -type f -exec dos2unix {} \;
 ### 编译原理
 
 ### Rust + FFI
-
-### mtr 工具
