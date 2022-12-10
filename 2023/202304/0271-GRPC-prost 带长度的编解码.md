@@ -1,4 +1,4 @@
-# 0271-GRPC-prost 带长度的编解码 copy
+# 0271-GRPC-prost 带长度的编解码
 
 ## 环境
 
