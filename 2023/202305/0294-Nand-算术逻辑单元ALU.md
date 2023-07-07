@@ -1,4 +1,4 @@
-# 0293-Nand-算术逻辑单元ALU
+# 0294-Nand-算术逻辑单元ALU
 
 ## 环境
 
@@ -37,7 +37,6 @@ CHIP HalfAdder {
 ## FullAdder
 
 ```hdl
-
 /**
  * Computes the sum of three bits.
  */
