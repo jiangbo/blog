@@ -154,6 +154,6 @@ const fonts = [_]u8{
 
 实现了模拟器加载 rom 的逻辑，将其加载到内存的 0x200处。
 
-[1]: images/screen.png
+[1]: ../202305/images/screen.png
 
 ## 附录
