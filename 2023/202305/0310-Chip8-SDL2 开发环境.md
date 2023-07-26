@@ -1,4 +1,4 @@
-# 0310-Zig 和 SDL2 开发环境
+# 0310-Chip8-SDL2 开发环境
 
 ## 环境
 
@@ -72,7 +72,7 @@ pub fn build(b: *std.Build) void {
 const std = @import("std");
 const c = @cImport(@cInclude("SDL.h"));
 
-const WIDTH: c_int = 640; 
+const WIDTH: c_int = 640;
 const HEIGHT: c_int = 320;
 
 var window: *c.SDL_Window = undefined;
