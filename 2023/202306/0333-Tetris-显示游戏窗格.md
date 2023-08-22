@@ -139,6 +139,6 @@ pub fn main() !void {
 
 显示了游戏背景，并且将画面分成一格一格的。
 
-[1]: images/window_grid.png
+[1]: images/window-grid.png
 
 ## 附录

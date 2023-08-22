@@ -25,7 +25,7 @@
 
 ```zig
 const std = @import("std");
-const screen = @import("screen.zig");
+const display = @import("display.zig");
 
 const tetriminoes: [7]Tetrimino = label: {
     var arr: [7]Tetrimino = undefined;
@@ -94,7 +94,7 @@ pub const Tetrimino = struct {
     color: u32,
     solid: bool = false,
 
-    pub fn position(self: *Tetrimino) [8]u8 {
+    pub fn position(self: *const Tetrimino) [8]u8 {
         return self.value[@intFromEnum(self.facing)];
     }
 
@@ -116,7 +116,7 @@ pub const Tetrimino = struct {
         if (self.x + minx < 0) self.x -= self.x + minx;
 
         const maxx = @max(@max(@max(pos[0], pos[2]), pos[4]), pos[6]);
-        const x = self.x + maxx - screen.WIDTH;
+        const x = self.x + maxx - display.WIDTH;
         if (x >= 0) self.x -= x + 1;
     }
 };
@@ -137,9 +137,9 @@ pub const Tetrimino = struct {
 
 ```zig
 const std = @import("std");
-const screen = @import("screen.zig");
+const display = @import("display.zig");
 
-const tetriminoes: [7]Tetrimino = label: {
+pub const tetriminoes: [7]Tetrimino = label: {
     var arr: [7]Tetrimino = undefined;
     // I
     arr[0] = .{ .y = -1, .value = .{
@@ -202,7 +202,7 @@ pub const Tetrimino = struct {
     color: u32,
     solid: bool = false,
 
-    pub fn position(self: *Tetrimino) [8]u8 {
+    pub fn position(self: *const Tetrimino) [8]u8 {
         return self.value[@intFromEnum(self.facing)];
     }
 
@@ -224,7 +224,7 @@ pub const Tetrimino = struct {
         if (self.x + minx < 0) self.x -= self.x + minx;
 
         const maxx = @max(@max(@max(pos[0], pos[2]), pos[4]), pos[6]);
-        const x = self.x + maxx - screen.WIDTH;
+        const x = self.x + maxx - display.WIDTH;
         if (x >= 0) self.x -= x + 1;
     }
 };
