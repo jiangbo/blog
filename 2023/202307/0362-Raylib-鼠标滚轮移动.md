@@ -1,4 +1,4 @@
-# 0360-Raylib-2D 移动方块
+# 0362-Raylib-鼠标滚轮移动
 
 ## 环境
 
@@ -17,7 +17,7 @@
 
 ### 目标
 
-展示一个 2D 的圆球，通过键盘控制它移动。
+展示一个 2D 的方块，通过鼠标滚轮的滚动进行上下移动。
 
 ## main.zig
 
@@ -33,37 +33,33 @@ pub fn main() void {
     defer ray.CloseWindow();
     ray.SetTargetFPS(60);
 
-    var ballPosition = ray.Vector2{
-        .x = @divExact(screenWidth, 2),
-        .y = @divExact(screenHeight, 2),
-    };
+    var boxPositionY: c_int = @divTrunc(screenHeight, 2) - 40;
+    const scrollSpeed: c_int = 10; // Scrolling speed in pixels
 
     while (!ray.WindowShouldClose()) {
         // Update
-        if (ray.IsKeyDown(ray.KEY_RIGHT)) ballPosition.x += 2.0;
-        if (ray.IsKeyDown(ray.KEY_LEFT)) ballPosition.x -= 2.0;
-        if (ray.IsKeyDown(ray.KEY_UP)) ballPosition.y -= 2.0;
-        if (ray.IsKeyDown(ray.KEY_DOWN)) ballPosition.y += 2.0;
+        boxPositionY -= (@as(c_int, @intFromFloat(ray.GetMouseWheelMove())) * scrollSpeed);
         //----------------------------------------------------------------------------------
         // Draw
         ray.BeginDrawing();
         defer ray.EndDrawing();
 
         ray.ClearBackground(ray.RAYWHITE);
-        ray.DrawText("move the ball with arrow keys", 10, 10, 20, ray.DARKGRAY);
-        ray.DrawCircleV(ballPosition, 50, ray.MAROON);
+        ray.DrawRectangle(screenWidth / 2 - 40, boxPositionY, 80, 80, ray.MAROON);
+        ray.DrawText("Use mouse wheel to move the cube up and down!", 10, 10, 20, ray.GRAY);
+        ray.DrawText(ray.TextFormat("Box position Y: %03i", boxPositionY), 10, 40, 20, ray.LIGHTGRAY);
     }
 }
 ```
 
 ## 效果
 
-![2D 方块移动][1]
+![2D 滚轮移动][1]
 
 ## 总结
 
-显示一个 2D 的圆球，通过键盘控制它移动。
+显示一个 2D 的方块，通过鼠标的滚轮来进行方块的移动。
 
-[1]: images/raylib-2d-move.png
+[1]: images/raylib-2d-wheel.png
 
 ## 附录
