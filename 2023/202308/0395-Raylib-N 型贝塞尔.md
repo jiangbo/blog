@@ -27,8 +27,6 @@ N-Patches的中文翻译为“N型贝塞尔曲面”或“N型贝塞尔片”。
 const std = @import("std");
 const ray = @import("raylib.zig");
 
-const NUM_FRAMES = 3;
-
 pub fn main() !void {
     const screenWidth: c_int = 800;
     const screenHeight: c_int = 450;
