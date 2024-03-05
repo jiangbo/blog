@@ -32,7 +32,7 @@ pub fn main() !void {
     const screenWidth: c_int = 800;
     const screenHeight: c_int = 450;
 
-    ray.InitWindow(screenWidth, screenHeight, "raylib [textures] example");
+    ray.InitWindow(screenWidth, screenHeight, "raylib [text] example");
     defer ray.CloseWindow();
     ray.SetTargetFPS(60);
 
@@ -122,6 +122,6 @@ pub fn main() !void {
 
 加载 Raylib 自带的字体。
 
-[1]: images/raylib-texture-font.png
+[1]: images/raylib-text-font.png
 
 ## 附录
