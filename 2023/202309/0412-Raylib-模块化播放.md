@@ -164,7 +164,7 @@ fn randomValueF(min: c_int, max: c_int) f32 {
 
 ## 效果
 
-![音乐播放。][1]
+![音乐播放][1]
 
 ## 总结
 
