@@ -1,11 +1,11 @@
-# 0355-Box-引入 raylib
+# 0423-Box-引入 raylib
 
 ## 环境
 
-- Time 2024-02-05
-- Zig 0.12.0-dev.2543+9eda6ccef
+- Time 2024-03-07
+- Zig 0.12.0-dev.3152+90c1a2c41
 - WSL-Ubuntu 22.04.3 LTS
-- raylib 5.0
+- Raylib 5.0
 
 ## 前言
 
@@ -14,15 +14,15 @@
 参考资料：
 
 1. 《游戏开发：世嘉新人培训教材》
-2. <https://github.com/raysan5/raylib/blob/master/examples/core/core_basic_window.c>
+2. <https://github.com/raysan5/raylib/blob/master/examples>
 
 ### 目标
 
-在之前控制台推箱子的基础上，引入 raylib 库，可以进行图形界面的显示。
+在之前控制台推箱子的基础上，引入 Raylib 库，可以进行图形界面的显示。
 
-## 引入 raylib 依赖
+## 引入 Raylib 依赖
 
-build.zig.zon 文件中增加 raylib 的依赖。
+build.zig.zon 文件中增加 Raylib 的依赖。
 
 ```zig
 .{
