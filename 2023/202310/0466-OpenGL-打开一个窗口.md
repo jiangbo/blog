@@ -15,6 +15,7 @@
 
 1. <https://github.com/hexops/mach-glfw-opengl-example/tree/main>
 2. <https://learnopengl-cn.github.io/01%20Getting%20started/03%20Hello%20Window/>
+3. <https://www.bilibili.com/video/BV1Ni4y1o7Au>
 
 ### 目标
 
@@ -93,7 +94,7 @@ var glProcs: gl.ProcTable = undefined;
 
 pub fn main() void {
     const window = initWindow();
-    defer window.destroy();
+    defer deinit(window);
 
     glfw.makeContextCurrent(window);
     defer glfw.makeContextCurrent(null);
@@ -103,7 +104,6 @@ pub fn main() void {
 
     gl.makeProcTableCurrent(&glProcs);
     defer gl.makeProcTableCurrent(null);
-    if (!glProcs.init(glfw.getProcAddress)) errorPanic();
 
     while (!window.shouldClose()) {
         processInput(window);
@@ -112,8 +112,6 @@ pub fn main() void {
         gl.ClearColor(0.2, 0.3, 0.3, 1.0);
         gl.Clear(gl.COLOR_BUFFER_BIT);
 
-        const size = window.getFramebufferSize();
-        gl.Viewport(0, 0, @intCast(size.width), @intCast(size.height));
         window.swapBuffers();
     }
 }
@@ -130,7 +128,8 @@ fn initWindow() glfw.Window {
     }) orelse errorPanic();
 }
 
-fn deinit() void {
+fn deinit(window: glfw.Window) void {
+    window.destroy();
     glfw.terminate();
 }
 
