@@ -89,29 +89,49 @@ fn errorPanic() noreturn {
     @panic(glfw.getErrorString() orelse "unknown error");
 }
 
+var glProcs: gl.ProcTable = undefined;
+
 pub fn main() void {
-    glfw.setErrorCallback(logGlfwError);
-
-    if (!glfw.init(.{})) errorPanic();
-    defer glfw.terminate();
-
-    const window = glfw.Window.create(640, 480, "学习 OpenGL", null, null, .{
-        .context_version_major = gl.info.version_major,
-        .context_version_minor = gl.info.version_minor,
-        .opengl_profile = .opengl_core_profile,
-    }) orelse errorPanic();
+    const window = initWindow();
     defer window.destroy();
 
     glfw.makeContextCurrent(window);
     defer glfw.makeContextCurrent(null);
-
     glfw.swapInterval(1);
+
+    if (!glProcs.init(glfw.getProcAddress)) errorPanic();
+
+    gl.makeProcTableCurrent(&glProcs);
+    defer gl.makeProcTableCurrent(null);
+    if (!glProcs.init(glfw.getProcAddress)) errorPanic();
 
     while (!window.shouldClose()) {
         processInput(window);
         glfw.pollEvents();
+
+        gl.ClearColor(0.2, 0.3, 0.3, 1.0);
+        gl.Clear(gl.COLOR_BUFFER_BIT);
+
+        const size = window.getFramebufferSize();
+        gl.Viewport(0, 0, @intCast(size.width), @intCast(size.height));
         window.swapBuffers();
     }
+}
+
+fn initWindow() glfw.Window {
+    glfw.setErrorCallback(logGlfwError);
+
+    if (!glfw.init(.{})) errorPanic();
+
+    return glfw.Window.create(640, 480, "学习 OpenGL", null, null, .{
+        .context_version_major = gl.info.version_major,
+        .context_version_minor = gl.info.version_minor,
+        .opengl_profile = .opengl_core_profile,
+    }) orelse errorPanic();
+}
+
+fn deinit() void {
+    glfw.terminate();
 }
 
 fn processInput(window: glfw.Window) void {
