@@ -58,7 +58,7 @@ gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, ebo);
 
 ## 效果
 
-![VAO 显示正方形][1]
+![显示正方形][1]
 
 ## 总结
 
