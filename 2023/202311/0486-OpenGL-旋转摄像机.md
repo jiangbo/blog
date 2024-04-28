@@ -1,8 +1,8 @@
-# 0485-OpenGL-多个旋转立方体
+# 0486-OpenGL-旋转摄像机
 
 ## 环境
 
-- Time 2024-04-27
+- Time 2024-04-28
 - Zig 0.12.0-dev.3180+83e578a18
 - WSL-Ubuntu 22.04.3 LTS
 - OpenGL 3.3
