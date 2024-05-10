@@ -1,4 +1,4 @@
-# 0507-WebGPU-基础图元
+# 0508-WebGPU-显示正方形
 
 ## 环境
 
@@ -16,11 +16,9 @@
 
 ### 目标
 
-画形状时，可以指定画点，线，三角形等，默认是画三角形，下面演示画线。
+通过画两个三角形的形式，画出一个正方形。
 
 ## shader.wgsl
-
-定义了六个点，可以画三条线。
 
 ```wgsl
 struct PosAndColor {
@@ -33,11 +31,10 @@ fn vs_main(@builtin(vertex_index) VertexIndex : u32) -> PosAndColor {
     let pos = array(
         vec2f( 0.5,  0.5),
         vec2f( 0.5, -0.5),
-        vec2f( 0.5, -0.5),
         vec2f(-0.5, -0.5),
         vec2f(-0.5, -0.5),
         vec2f(-0.5,  0.5),
-        // vec2f( 0.5,  0.5)
+        vec2f( 0.5,  0.5)
     );
 
     let pos4f = vec4f(pos[VertexIndex], 0.0, 1.0);
@@ -52,8 +49,6 @@ fn fs_main(in: PosAndColor) -> @location(0) vec4f {
 ```
 
 ## main.zig
-
-需要修改 draw 方法，并且渲染流水线新增了图元的配置。
 
 ```zig
 const std = @import("std");
@@ -93,8 +88,6 @@ pub fn init(app: *App) !void {
     app.renderPipeline = device.createRenderPipeline(&.{
         .vertex = .{ .module = shader, .entry_point = "vs_main" },
         .fragment = &fragment,
-        // 指定了图元，画线
-        .primitive = .{ .topology = .line_list },
     });
 }
 
@@ -128,8 +121,8 @@ pub fn update(app: *App) !bool {
     const pass = encoder.beginRenderPass(&renderPass);
     // 绘制
     pass.setPipeline(app.renderPipeline);
-    // 六个点，画三次
-    pass.draw(6, 3, 0, 0);
+    // 六个点，画两个三角形
+    pass.draw(6, 2, 0, 0);
     pass.end();
     pass.release();
 
@@ -149,12 +142,12 @@ pub fn update(app: *App) !bool {
 
 ## 效果
 
-![基础图元][1]
+![正方形][1]
 
 ## 总结
 
-使用 WebGPU 来画线。
+通过画两个三角形来显示正方形。
 
-[1]: images/webgpu05.png
+[1]: images/webgpu06.png
 
 ## 附录
