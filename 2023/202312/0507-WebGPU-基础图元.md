@@ -1,4 +1,4 @@
-# 0506-WebGPU-彩色三角形
+# 0507-WebGPU-基础图元
 
 ## 环境
 
@@ -16,9 +16,11 @@
 
 ### 目标
 
-在之前的基础上去掉了抗锯齿，通过修改着色器，实现了显示一个彩色三角形。
+画形状时，可以指定画点，线，三角形等，下面演示画线。
 
 ## shader.wgsl
+
+定义了六个点，可以画三条线。
 
 ```wgsl
 struct PosAndColor {
@@ -29,20 +31,18 @@ struct PosAndColor {
 @vertex
 fn vs_main(@builtin(vertex_index) VertexIndex : u32) -> PosAndColor {
     let pos = array(
-        vec2f( 0.0,  0.5),
+        vec2f( 0.5,  0.5),
+        vec2f( 0.5, -0.5),
+        vec2f( 0.5, -0.5),
         vec2f(-0.5, -0.5),
-        vec2f( 0.5, -0.5)
-    );
-
-    let color = array(
-        vec3f(1.0, 0.0, 0.0),
-        vec3f(0.0, 1.0, 0.0),
-        vec3f(0.0, 0.0, 1.0 )
+        vec2f(-0.5, -0.5),
+        vec2f(-0.5,  0.5),
+        // vec2f( 0.5,  0.5)
     );
 
     let pos4f = vec4f(pos[VertexIndex], 0.0, 1.0);
 
-    return PosAndColor(pos4f, vec4f(color[VertexIndex], 1.0));
+    return PosAndColor(pos4f, vec4f(0.9, 0.5, 0.7, 1.0));
 }
 
 @fragment
@@ -51,19 +51,9 @@ fn fs_main(in: PosAndColor) -> @location(0) vec4f {
 }
 ```
 
-## 效果
+## main.zig
 
-![彩色三角形][1]
-
-## 总结
-
-使用着色器显示一个彩色三角形。
-
-[1]: images/webgpu04.png
-
-## 附录
-
-### 源码
+需要修改 draw 方法，并且渲染流水线新增了图元的配置。
 
 ```zig
 const std = @import("std");
@@ -73,7 +63,6 @@ pub const App = @This();
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 renderPipeline: *mach.gpu.RenderPipeline,
-timer: mach.core.Timer,
 
 pub fn init(app: *App) !void {
 
@@ -104,10 +93,9 @@ pub fn init(app: *App) !void {
     app.renderPipeline = device.createRenderPipeline(&.{
         .vertex = .{ .module = shader, .entry_point = "vs_main" },
         .fragment = &fragment,
+        // 指定了图元，画线
+        .primitive = .{ .topology = .line_list },
     });
-
-    // 初始化计时器，用于计算帧率
-    app.timer = try mach.core.Timer.start();
 }
 
 pub fn deinit(app: *App) void {
@@ -140,7 +128,8 @@ pub fn update(app: *App) !bool {
     const pass = encoder.beginRenderPass(&renderPass);
     // 绘制
     pass.setPipeline(app.renderPipeline);
-    pass.draw(3, 1, 0, 0);
+    // 六个点，画三次
+    pass.draw(6, 3, 0, 0);
     pass.end();
     pass.release();
 
@@ -153,16 +142,19 @@ pub fn update(app: *App) !bool {
     mach.core.swap_chain.present();
     view.release();
 
-    // 在窗口的标题栏显示帧率
-    if (app.timer.read() >= 1.0) {
-        app.timer.reset();
-        try mach.core.printTitle("[ {d}fps ] [ Input {d}hz ]", .{
-            mach.core.frameRate(),
-            mach.core.inputRate(),
-        });
-    }
-
     // 不退出渲染循环
     return false;
 }
 ```
+
+## 效果
+
+![基础图元][1]
+
+## 总结
+
+使用 WebGPU 来画线。
+
+[1]: images/webgpu05.png
+
+## 附录
