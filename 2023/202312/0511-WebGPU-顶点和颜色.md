@@ -1,4 +1,4 @@
-# 0510-WebGPU-顶点缓冲区
+# 0511-WebGPU-顶点和颜色
 
 ## 环境
 
@@ -17,7 +17,34 @@
 
 ### 目标
 
-现在需要画的形状在 WGSL 中定死了，可以通过顶点缓冲区来提供图形的形状。
+之前只把顶点通过参数传给了着色器，其实颜色也可以通过参数传给着色器。
+
+## shader.wgsl
+
+```wgsl
+struct VertexInput {
+    @location(0) position: vec2f,
+    @location(1) color: vec3f,
+};
+
+struct VertexOutput {
+    @builtin(position) position: vec4f,
+    @location(0) color: vec3f,
+};
+
+@vertex
+fn vs_main(in: VertexInput) -> VertexOutput {
+    var out: VertexOutput;
+    out.position = vec4f(in.position, 0.0, 1.0);
+    out.color = in.color;
+    return out;
+}
+
+@fragment
+fn fs_main(in: VertexOutput) -> @location(0) vec4f {
+    return vec4f(in.color, 1.0);
+}
+```
 
 ## main.zig
 
@@ -29,12 +56,12 @@ pub const App = @This();
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const vertexData = [_]f32{
-    0.5,  0.5,
-    1.0,  -0.5,
-    -0.5, -0.5,
-    -0.5, -0.5,
-    -0.5, 0.5,
-    0.5,  0.5,
+    0.5,  0.5,  1.0, 0.0, 0.0, //
+    0.5,  -0.5, 0.0, 1.0, 0.0,
+    -0.5, -0.5, 0.0, 0.0, 1.0,
+    -0.5, -0.5, 0.0, 0.0, 1.0,
+    -0.5, 0.5,  0.0, 1.0, 0.0,
+    0.5,  0.5,  1.0, 0.0, 0.0,
 };
 
 renderPipeline: *mach.gpu.RenderPipeline,
@@ -68,18 +95,22 @@ pub fn init(app: *App) !void {
     const shader = device.createShaderModuleWGSL("shader.wgsl", source);
     defer shader.release();
 
+    const vertextLayout = mach.gpu.VertexBufferLayout.init(.{
+        // 前面两个是坐标，后面三个是颜色
+        .array_stride = @sizeOf(f32) * 5,
+        .attributes = &.{
+            // 第一个是顶点坐标，偏移从 0 开始
+            .{ .format = .float32x2, .offset = 0, .shader_location = 0 },
+            // 第二个是颜色，偏移从 2 开始，shader_location 对应 WGSL 中的 location 位置
+            .{ .format = .float32x3, .offset = @sizeOf(f32) * 2, .shader_location = 1 },
+        },
+    });
+
     // 顶点着色器状态
     const vertex = mach.gpu.VertexState.init(.{
         .module = shader,
         .entry_point = "vs_main",
-        .buffers = &.{mach.gpu.VertexBufferLayout.init(.{
-            // 分组，两个 f32 为一组传给顶点着色器
-            .array_stride = @sizeOf(f32) * 2,
-            .attributes = &.{
-                // 格式和偏移，还有位置
-                .{ .format = .float32x2, .offset = 0, .shader_location = 0 },
-            },
-        })},
+        .buffers = &.{vertextLayout},
     });
 
     // 片段着色器状态
@@ -131,7 +162,7 @@ pub fn update(app: *App) !bool {
     //  设置顶点缓冲的位置
     pass.setVertexBuffer(0, app.vertexBuffer, 0, @sizeOf(@TypeOf(vertexData)));
     // 六个点，画两个三角形
-    pass.draw(vertexData.len / 2, 2, 0, 0);
+    pass.draw(vertexData.len / 5, 2, 0, 0);
     pass.end();
     pass.release();
 
@@ -151,12 +182,12 @@ pub fn update(app: *App) !bool {
 
 ## 效果
 
-![使用顶点缓冲区][1]
+![彩色正方形][1]
 
 ## 总结
 
-使用顶点缓冲区来提供顶点数据，可以在程序中直接修改顶点，而不用对着色器文件进行修改。
+通过顶点缓冲区，把颜色信息传递给了着色器。
 
-[1]: images/webgpu07.png
+[1]: images/webgpu08.png
 
 ## 附录
