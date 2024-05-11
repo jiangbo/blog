@@ -1,4 +1,4 @@
-# 0511-WebGPU-顶点和颜色
+# 0512-WebGPU-分离颜色数据
 
 ## 环境
 
@@ -17,34 +17,11 @@
 
 ### 目标
 
-之前只把顶点通过参数传给了着色器，其实颜色也可以通过参数传给着色器。
+之前是把颜色和顶点信息放在一个缓冲区中，下面分离颜色和顶点数据。
 
 ## shader.wgsl
 
-```wgsl
-struct VertexInput {
-    @location(0) position: vec2f,
-    @location(1) color: vec3f,
-};
-
-struct VertexOutput {
-    @builtin(position) position: vec4f,
-    @location(0) color: vec3f,
-};
-
-@vertex
-fn vs_main(in: VertexInput) -> VertexOutput {
-    var out: VertexOutput;
-    out.position = vec4f(in.position, 0.0, 1.0);
-    out.color = in.color;
-    return out;
-}
-
-@fragment
-fn fs_main(in: VertexOutput) -> @location(0) vec4f {
-    return vec4f(in.color, 1.0);
-}
-```
+shader.wgsl 无变化。
 
 ## main.zig
 
@@ -56,16 +33,26 @@ pub const App = @This();
 
 var gpa = std.heap.GeneralPurposeAllocator(.{}){};
 const vertexData = [_]f32{
-    0.5,  0.5,  1.0, 0.0, 0.0, //
-    0.5,  -0.5, 0.0, 1.0, 0.0,
-    -0.5, -0.5, 0.0, 0.0, 1.0,
-    -0.5, -0.5, 0.0, 0.0, 1.0,
-    -0.5, 0.5,  0.0, 1.0, 0.0,
-    0.5,  0.5,  1.0, 0.0, 0.0,
+    0.5,  0.5, //
+    0.5,  -0.5,
+    -0.5, -0.5,
+    -0.5, -0.5,
+    -0.5, 0.5,
+    0.5,  0.5,
+};
+
+const colorData = [_]f32{
+    1.0, 0.0, 0.0,
+    0.0, 1.0, 0.0,
+    0.0, 0.0, 1.0,
+    0.0, 0.0, 1.0,
+    0.0, 1.0, 0.0,
+    1.0, 0.0, 0.0,
 };
 
 renderPipeline: *mach.gpu.RenderPipeline,
 vertexBuffer: *mach.gpu.Buffer,
+colorBuffer: *mach.gpu.Buffer,
 
 pub fn init(app: *App) !void {
 
@@ -87,22 +74,35 @@ pub fn init(app: *App) !void {
         .size = @sizeOf(@TypeOf(vertexData)),
     });
 
+    // 创建颜色缓冲区
+    app.colorBuffer = device.createBuffer(&.{
+        .label = "color",
+        .usage = .{ .copy_dst = true, .vertex = true },
+        .size = @sizeOf(@TypeOf(colorData)),
+    });
+
     // 将 CPU 内存中的数据复制到 GPU 内存中
     mach.core.queue.writeBuffer(app.vertexBuffer, 0, &vertexData);
+    mach.core.queue.writeBuffer(app.colorBuffer, 0, &colorData);
 
     // 编译 shader
     const source = @embedFile("shader/shader.wgsl");
     const shader = device.createShaderModuleWGSL("shader.wgsl", source);
     defer shader.release();
 
+    // 顶点的布局
     const vertexLayout = mach.gpu.VertexBufferLayout.init(.{
-        // 前面两个是坐标，后面三个是颜色
-        .array_stride = @sizeOf(f32) * 5,
+        .array_stride = @sizeOf(f32) * 2,
         .attributes = &.{
-            // 第一个是顶点坐标，偏移从 0 开始
             .{ .format = .float32x2, .offset = 0, .shader_location = 0 },
-            // 第二个是颜色，偏移从 2 开始，shader_location 对应 WGSL 中的 location 位置
-            .{ .format = .float32x3, .offset = @sizeOf(f32) * 2, .shader_location = 1 },
+        },
+    });
+
+    // 颜色布局
+    const colorLayout = mach.gpu.VertexBufferLayout.init(.{
+        .array_stride = @sizeOf(f32) * 3,
+        .attributes = &.{
+            .{ .format = .float32x3, .offset = 0, .shader_location = 1 },
         },
     });
 
@@ -110,7 +110,8 @@ pub fn init(app: *App) !void {
     const vertex = mach.gpu.VertexState.init(.{
         .module = shader,
         .entry_point = "vs_main",
-        .buffers = &.{vertexLayout},
+        // 分离颜色和顶点数据，传递给渲染管线
+        .buffers = &.{ vertexLayout, colorLayout },
     });
 
     // 片段着色器状态
@@ -161,8 +162,9 @@ pub fn update(app: *App) !bool {
 
     //  设置顶点缓冲的位置
     pass.setVertexBuffer(0, app.vertexBuffer, 0, @sizeOf(@TypeOf(vertexData)));
+    pass.setVertexBuffer(1, app.colorBuffer, 0, @sizeOf(@TypeOf(colorData)));
     // 六个点，画两个三角形
-    pass.draw(vertexData.len / 5, 2, 0, 0);
+    pass.draw(vertexData.len / 2, 2, 0, 0);
     pass.end();
     pass.release();
 
@@ -182,12 +184,12 @@ pub fn update(app: *App) !bool {
 
 ## 效果
 
-![彩色正方形][1]
+![分离顶点和颜色][1]
 
 ## 总结
 
-通过顶点缓冲区，把颜色信息传递给了着色器。
+分离颜色和顶点数据，单独把颜色信息传递给了着色器。
 
-[1]: images/webgpu08.png
+[1]: images/webgpu09.png
 
 ## 附录
