@@ -55,6 +55,8 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
 
 ## main.zig
 
+无变化
+
 ## 效果
 
 ![标准化坐标][1]
