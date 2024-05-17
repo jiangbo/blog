@@ -157,6 +157,8 @@ pub fn init(app: *App) !void {
     var matrix = mat3.mul(offset, rotate);
     matrix = mat3.mul(matrix, scale);
 
+    // mat3x3 矩阵应该按照 48 字节对齐
+    // 参考：https://www.w3.org/TR/WGSL/#alignment-and-size
     var model: [12]f32 = undefined;
     for (matrix, 0..) |value, index| {
         const mod, const div = .{ index % 3, index / 3 };
