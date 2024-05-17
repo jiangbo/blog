@@ -1,4 +1,4 @@
-# 0522-WebGPU-2D 平移
+# 0523-WebGPU-2D 平移
 
 ## 环境
 
@@ -13,11 +13,11 @@
 参考资料：
 
 1. <https://github.com/hexops/mach/tree/main/src/core/examples>
-2. <https://eliemichel.github.io/LearnWebGPU/index.html>
+2. <https://webgpufundamentals.org/>
 
 ### 目标
 
-将矩形在 2D 平面内进行平移。
+将三角形在 2D 平面内进行平移。
 
 ## shader.wgsl
 
@@ -42,10 +42,11 @@ struct VertexOutput {
 @vertex
 fn vs_main(in: VertexInput) -> VertexOutput {
     var out: VertexOutput;
+    // 平移
     let x = in.position.x + model.offset.x;
-    // 翻转 y 轴
-    let y = in.position.y - model.offset.y;
-    out.position = vec4f(x, y, in.position.z, in.position.w);
+    let y = in.position.y + model.offset.y;
+    // 翻转 Y 轴，来适合屏幕坐标系
+    out.position = vec4f(x, -y, in.position.z, in.position.w);
     out.color = in.color;
     return out;
 }
@@ -56,12 +57,16 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
 }
 ```
 
+## render.zig
+
+无变化。
+
 ## main.zig
 
 ```zig
 const std = @import("std");
 const mach = @import("mach");
-const mesh = @import("mesh.zig");
+const render = @import("render.zig");
 
 pub const App = @This();
 const Model = struct {
@@ -74,7 +79,10 @@ vertexBuffer: *mach.gpu.Buffer = undefined,
 bindGroup: *mach.gpu.BindGroup = undefined,
 
 pub fn init(app: *App) !void {
-    try mach.core.init(.{ .size = .{ .width = 600, .height = 480 } });
+    try mach.core.init(.{
+        .title = "学习 WebGPU",
+        .size = .{ .width = 600, .height = 480 },
+    });
     // 设置帧率
     mach.core.setFrameRateLimit(30);
     mach.core.setInputFrequency(30);
@@ -84,10 +92,13 @@ pub fn init(app: *App) !void {
         .usage = .{ .copy_dst = true, .uniform = true },
         .size = @sizeOf(Model),
     });
-    const modelData = Model{ .offset = .{ 0.5, 0.5 } };
+    const modelData = Model{ .offset = .{ 0.6, 0.6 } };
     device.getQueue().writeBuffer(modelBuffer, 0, &modelData.offset);
 
-    app.renderPipeline = createRenderPipeline(app);
+    const renderContext = render.createRenderPipeline();
+    app.renderPipeline = renderContext.pipeline;
+    app.vertexBuffer = renderContext.vertexBuffer;
+
     const Entry = mach.gpu.BindGroup.Entry;
     app.bindGroup = device.createBindGroup(
         &mach.gpu.BindGroup.Descriptor.init(.{
@@ -97,62 +108,6 @@ pub fn init(app: *App) !void {
             },
         }),
     );
-}
-
-fn createRenderPipeline(app: *App) *mach.gpu.RenderPipeline {
-    const device = mach.core.device;
-
-    const vertexData = [_]f32{
-        0.4,  0.4,  1.0, 0.0, 0.0, //
-        0.4,  -0.4, 0.0, 1.0, 0.0,
-        -0.4, -0.4, 0.0, 0.0, 1.0,
-        -0.4, -0.4, 0.0, 0.0, 1.0,
-        -0.4, 0.4,  0.0, 1.0, 0.0,
-        0.4,  0.4,  1.0, 0.0, 0.0,
-    };
-
-    // 编译 shader
-    const source = @embedFile("shader.wgsl");
-    const module = device.createShaderModuleWGSL("shader.wgsl", source);
-    defer module.release();
-
-    // 创建顶点缓冲区
-    app.vertexBuffer = device.createBuffer(&.{
-        .label = "vertex",
-        .usage = .{ .copy_dst = true, .vertex = true },
-        .size = @sizeOf(f32) * vertexData.len,
-    });
-
-    // 将 CPU 内存中的数据复制到 GPU 内存中
-    mach.core.queue.writeBuffer(app.vertexBuffer, 0, &vertexData);
-
-    const vertexLayout = mach.gpu.VertexBufferLayout.init(.{
-        .array_stride = @sizeOf(f32) * 5,
-        .attributes = &.{
-            .{ .format = .float32x2, .offset = 0, .shader_location = 0 },
-            .{ .format = .float32x3, .offset = @sizeOf(f32) * 2, .shader_location = 1 },
-        },
-    });
-
-    const vertex = mach.gpu.VertexState.init(.{
-        .module = module,
-        .entry_point = "vs_main",
-        .buffers = &.{vertexLayout},
-    });
-
-    // 片段着色器状态
-    const fragment = mach.gpu.FragmentState.init(.{
-        .module = module,
-        .entry_point = "fs_main",
-        .targets = &.{.{ .format = mach.core.descriptor.format }},
-    });
-
-    // 创建渲染管线
-    const descriptor = mach.gpu.RenderPipeline.Descriptor{
-        .fragment = &fragment,
-        .vertex = vertex,
-    };
-    return device.createRenderPipeline(&descriptor);
 }
 
 pub fn deinit(app: *App) void {
@@ -187,7 +142,7 @@ pub fn update(app: *App) !bool {
     pass.setVertexBuffer(0, app.vertexBuffer, 0, app.vertexBuffer.getSize());
     pass.setBindGroup(0, app.bindGroup, &.{});
 
-    pass.draw(6, 2, 0, 0);
+    pass.draw(3, 1, 0, 0);
     pass.end();
     pass.release();
 
@@ -211,8 +166,8 @@ pub fn update(app: *App) !bool {
 
 ## 总结
 
-将 2D 矩形平移到右下角。
+将 2D 三角形平移到右下角。
 
-[1]: images/webgpu18.png
+[1]: images/webgpu19.png
 
 ## 附录
