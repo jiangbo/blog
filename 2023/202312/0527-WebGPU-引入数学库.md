@@ -56,8 +56,19 @@ pub fn init(app: *App) !void {
     const device = mach.core.device;
 
     var vec2 = mach.math.Vec2.init(0.2, 0.2);
+    const angle = mach.math.degreesToRadians(f32, 0);
     var model = mach.math.Mat3x3.translate(vec2);
-    // 3x3 矩阵的旋转有点问题，先去掉。
+
+    // 默认的数学库中没有找到旋转的实现，手动实现一个。
+    const s = @sin(angle);
+    const c = @cos(angle);
+    const rotate = mach.math.Mat3x3.init(
+        &mach.math.Mat3x3.RowVec.init(c, -s, 0),
+        &mach.math.Mat3x3.RowVec.init(s, c, 0),
+        &mach.math.Mat3x3.RowVec.init(0, 0, 1),
+    );
+
+    model = model.mul(&rotate);
     vec2 = mach.math.Vec2.init(2, 2);
     model = model.mul(&mach.math.Mat3x3.scale(vec2));
 
