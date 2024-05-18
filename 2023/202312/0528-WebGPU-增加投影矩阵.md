@@ -1,4 +1,4 @@
-# 0527-WebGPU-显示字母 F
+# 0528-WebGPU-增加投影矩阵
 
 ## 环境
 
@@ -17,7 +17,7 @@
 
 ### 目标
 
-修改顶点和索引数据，显示一个大写的 F 字母，和教程保持一致。
+将着色器中的变换移除，使用投影矩阵实现相同的功能。
 
 ## shader.wgsl
 
@@ -36,25 +36,9 @@ struct VertexOutput {
 @vertex
 fn vs_main(in: VertexInput) -> VertexOutput {
     var out: VertexOutput;
-    let xy = (model * in.position.xyz).xy;
+    let xy = (model * vec3f(in.position.xy, 1)).xy;
 
-    let position = (model * vec3f(in.position.xy, 1)).xy;
-
-    let resolution = vec2f(640,480);
-    // convert the position from pixels to a 0.0 to 1.0 value
-    let zeroToOne = position / resolution;
-
-    // convert from 0 <-> 1 to 0 <-> 2
-    let zeroToTwo = zeroToOne * 2.0;
-
-    // covert from 0 <-> 2 to -1 <-> +1 (clip space)
-    let flippedClipSpace = zeroToTwo - 1.0;
-
-    // flip Y
-    let clipSpace = flippedClipSpace * vec2f(1, -1);
-
-    out.position = vec4f(clipSpace, 0.0, 1.0);
-
+    out.position = vec4f(xy, 0.0, 1.0);
     out.color = vec4f(0, 1, 0, 1);
     return out;
 }
@@ -67,107 +51,7 @@ fn fs_main(in: VertexOutput) -> @location(0) vec4f {
 
 ## render.zig
 
-```zig
-const std = @import("std");
-const mach = @import("mach");
-
-pub const RenderContext = struct {
-    vertexBuffer: *mach.gpu.Buffer,
-    indexBuffer: *mach.gpu.Buffer,
-    pipeline: *mach.gpu.RenderPipeline,
-
-    pub fn release(self: *RenderContext) void {
-        self.vertexBuffer.release();
-        self.indexBuffer.release();
-        self.pipeline.release();
-    }
-};
-
-pub const vertexData = [_]f32{
-    // left column
-    0,   0,
-    30,  0,
-    0,   150,
-    30,  150,
-
-    // top rung
-    30,  0,
-    100, 0,
-    30,  30,
-    100, 30,
-
-    // middle rung
-    30,  60,
-    70,  60,
-    30,  90,
-    70,  90,
-};
-
-pub const indexData = [_]u32{
-    0, 1, 2, 2, 1, 3, // left column
-    4, 5, 6, 6, 5, 7, // top run
-    8, 9, 10, 10, 9, 11, // middle run
-};
-
-pub fn createRenderPipeline() RenderContext {
-    const device = mach.core.device;
-
-    // 编译 shader
-    const source = @embedFile("shader.wgsl");
-    const module = device.createShaderModuleWGSL("shader.wgsl", source);
-    defer module.release();
-
-    // 顶点缓冲区
-    const vertexBuffer = device.createBuffer(&.{
-        .label = "vertex",
-        .usage = .{ .copy_dst = true, .vertex = true },
-        .size = @sizeOf(@TypeOf(vertexData)),
-    });
-
-    // 索引缓冲区
-    const indexBuffer = device.createBuffer(&.{
-        .label = "index",
-        .size = @sizeOf(@TypeOf(indexData)),
-        .usage = .{ .index = true, .copy_dst = true },
-    });
-
-    // 将 CPU 内存中的数据复制到 GPU 内存中
-    mach.core.queue.writeBuffer(vertexBuffer, 0, &vertexData);
-    mach.core.queue.writeBuffer(indexBuffer, 0, &indexData);
-
-    const vertexLayout = mach.gpu.VertexBufferLayout.init(.{
-        .array_stride = @sizeOf(f32) * 2,
-        .attributes = &.{
-            .{ .format = .float32x2, .offset = 0, .shader_location = 0 },
-        },
-    });
-
-    const vertex = mach.gpu.VertexState.init(.{
-        .module = module,
-        .entry_point = "vs_main",
-        .buffers = &.{vertexLayout},
-    });
-
-    // 片段着色器状态
-    const fragment = mach.gpu.FragmentState.init(.{
-        .module = module,
-        .entry_point = "fs_main",
-        .targets = &.{.{ .format = mach.core.descriptor.format }},
-    });
-
-    // 创建渲染管线
-    const descriptor = mach.gpu.RenderPipeline.Descriptor{
-        .fragment = &fragment,
-        .vertex = vertex,
-    };
-    const pipeline = device.createRenderPipeline(&descriptor);
-    return .{
-        .vertexBuffer = vertexBuffer,
-        .indexBuffer = indexBuffer,
-        .pipeline = pipeline,
-    };
-}
-```
+无变化。
 
 ## mat.zig
 
@@ -203,13 +87,22 @@ pub fn init(app: *App) !void {
         .size = byteSize,
     });
 
-    const angle: f32 = 10 * std.math.pi / 180.0;
+    const scaleBy1OverResolutionMatrix = mat.scale(1.0 / 640.0, 1.0 / 480.0);
+    const scaleBy2Matrix = mat.scale(2, 2);
+    const translateByMinus1 = mat.offset(-1, -1);
+    const scaleBy1Minus1 = mat.scale(1, -1);
+
+    const angle: f32 = 0 * std.math.pi / 180.0;
     const offset = mat.offset(200, 100);
     const rotate = mat.rotate(angle);
     const scale = mat.scale(2, 2);
 
-    var matrix = mat.mul(scale, rotate);
+    var matrix = mat.mul(scaleBy1Minus1, translateByMinus1);
+    matrix = mat.mul(matrix, scaleBy2Matrix);
+    matrix = mat.mul(matrix, scaleBy1OverResolutionMatrix);
     matrix = mat.mul(matrix, offset);
+    matrix = mat.mul(matrix, rotate);
+    matrix = mat.mul(matrix, scale);
 
     // mat3x3 矩阵应该按照 48 字节对齐
     // 参考：https://www.w3.org/TR/WGSL/#alignment-and-size
@@ -288,12 +181,12 @@ pub fn update(app: *App) !bool {
 
 ## 效果
 
-![显示字母 F][1]
+![投影矩阵][1]
 
 ## 总结
 
-修改成和教程一致，显示一个大写的字母 F。
+增加投影矩阵。
 
-[1]: images/webgpu23.png
+[1]: images/webgpu24.png
 
 ## 附录
