@@ -63,11 +63,6 @@ pub fn init(app: *App) !void {
         .size = byteSize,
     });
 
-    // const projection = [_]f32{
-    //     2.0 / @as(f32, width), 0,                       0, 0,
-    //     0,                     -2.0 / @as(f32, height), 0, 0,
-    //     -1,                    1,                       1, 0,
-    // };
     const x = 2.0 / @as(f32, width);
     const y = -2.0 / @as(f32, height);
     const projection = mach.math.Mat3x3.init(
