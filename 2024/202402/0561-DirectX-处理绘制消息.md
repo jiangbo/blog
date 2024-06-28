@@ -1,4 +1,4 @@
-# 0560-DirectX-显示文字
+# 0561-DirectX-处理绘制消息
 
 ## 环境
 
@@ -16,17 +16,7 @@
 
 ### 目标
 
-通过 textOut 显示文字。
-
-## windows.rc
-
-文件都存放在 assets 目录下。
-
-```rc
-// note that this file has different types of resources
-ICON_T3DX        ICON   t3dx.ico
-CURSOR_CROSSHAIR CURSOR crosshair.cur
-```
+处理绘制消息，在收到重绘消息时，将绘制的次数显示到窗口中。
 
 ## main.zig
 
@@ -46,6 +36,7 @@ const WIDTH: u32 = 640;
 const HEIGHT: u32 = 480;
 var hinstance: H = undefined;
 var hander: win32.foundation.HWND = undefined;
+var count: u32 = 0;
 
 pub fn mainWindowCallback(
     window: win32.foundation.HWND,
@@ -53,15 +44,14 @@ pub fn mainWindowCallback(
     wParam: win32.foundation.WPARAM,
     lParam: win32.foundation.LPARAM,
 ) callconv(WINAPI) win32.foundation.LRESULT {
+    var buffer: [200]u8 = undefined;
+    var fba = std.heap.FixedBufferAllocator.init(&buffer);
+
     switch (message) {
         ui.WM_CREATE => {
             std.log.info("WM_CREATE", .{});
         },
-        ui.WM_PAINT => {
-            var paint: gdi.PAINTSTRUCT = undefined;
-            _ = gdi.BeginPaint(window, &paint);
-            _ = gdi.EndPaint(window, &paint);
-        },
+        ui.WM_PAINT => paintHandle(fba.allocator()) catch win32Panic(),
         ui.WM_DESTROY => {
             std.log.info("WM_DESTROY", .{});
             _ = winmm.PlaySoundW(null, hinstance, winmm.SND_PURGE);
@@ -83,6 +73,7 @@ pub fn wWinMain(h: H, _: ?H, _: [*:0]u16, _: u32) callconv(WINAPI) i32 {
     windowClass.hIcon = ui.LoadIcon(h, win32.zig.L("ICON_T3DX"));
     windowClass.hCursor = ui.LoadCursor(h, win32.zig.L("CURSOR_CROSSHAIR"));
     windowClass.hIconSm = ui.LoadIcon(h, win32.zig.L("ICON_T3DX"));
+    windowClass.hbrBackground = gdi.GetStockObject(gdi.BLACK_BRUSH);
 
     if (ui.RegisterClassEx(&windowClass) == 0) win32Panic();
 
@@ -105,12 +96,6 @@ pub fn wWinMain(h: H, _: ?H, _: [*:0]u16, _: u32) callconv(WINAPI) i32 {
 
     hinstance = h;
     hander = window orelse win32Panic();
-
-    const time: u64 = @intCast(std.time.milliTimestamp());
-    var rand = std.rand.DefaultPrng.init(time);
-    const hdc = gdi.GetDC(window).?;
-    defer _ = gdi.ReleaseDC(window, hdc);
-
     var message: ui.MSG = undefined;
     while (true) {
         if (ui.PeekMessage(&message, null, 0, 0, ui.PM_REMOVE) > 0) {
@@ -118,22 +103,6 @@ pub fn wWinMain(h: H, _: ?H, _: [*:0]u16, _: u32) callconv(WINAPI) i32 {
             _ = ui.TranslateMessage(&message);
             _ = ui.DispatchMessage(&message);
         }
-
-        const color = Color{
-            .r = rand.random().int(u8),
-            .g = rand.random().int(u8),
-            .b = rand.random().int(u8),
-        };
-
-        _ = gdi.SetTextColor(hdc, @bitCast(color));
-        _ = gdi.SetBkColor(hdc, @bitCast(std.mem.zeroes(Color)));
-        _ = gdi.SetBkMode(hdc, gdi.TRANSPARENT);
-
-        const x: i32 = rand.random().intRangeLessThan(i32, 0, WIDTH);
-        const y: i32 = rand.random().intRangeLessThan(i32, 0, HEIGHT);
-        _ = gdi.TextOut(hdc, x, y, name, name.len);
-
-        std.time.sleep(10 * std.time.ns_per_ms);
     }
 
     std.log.info("wWinMain end", .{});
@@ -144,22 +113,30 @@ fn win32Panic() noreturn {
     @panic(@tagName(win32.foundation.GetLastError()));
 }
 
-const Color = extern struct {
-    r: u8 = 0,
-    g: u8 = 0,
-    b: u8 = 0,
-    a: u8 = 0,
-};
+fn paintHandle(allocator: std.mem.Allocator) !void {
+    var paint: gdi.PAINTSTRUCT = undefined;
+    const hdc = gdi.BeginPaint(hander, &paint);
+    defer _ = gdi.EndPaint(hander, &paint);
+
+    _ = gdi.SetTextColor(hdc, 0xFFFF00);
+    _ = gdi.SetBkColor(hdc, 0);
+    _ = gdi.SetBkMode(hdc, .OPAQUE);
+
+    count += 1;
+    const utf8 = try std.fmt.allocPrint(allocator, "绘制 {} 次", .{count});
+    const text = try std.unicode.utf8ToUtf16LeAllocZ(allocator, utf8);
+    _ = gdi.TextOut(hdc, 0, 0, text, @intCast(text.len));
+}
 ```
 
 ## 效果
 
-![显示文字][1]。
+![绘制次数][1]。
 
 ## 总结
 
-使用随机数来生成不同颜色的文字。
+处理绘制消息，在收到重绘消息时，将绘制的次数显示到窗口中。
 
-[1]: images/directx08.png
+[1]: images/directx09.png
 
 ## 附录
