@@ -1,4 +1,4 @@
-# 0563-DirectX-窗口大小修改事件
+# 0564-DirectX-窗口移动事件
 
 ## 环境
 
@@ -16,7 +16,7 @@
 
 ### 目标
 
-获取窗口改变事件，并将窗口大小打印到窗口中。
+获取窗口移动事件，并将坐标打印到屏幕上。
 
 ## main.zig
 
@@ -51,9 +51,9 @@ pub fn mainWindowCallback(
         ui.WM_CREATE => {
             std.log.info("WM_CREATE", .{});
         },
-        ui.WM_SIZE => {
-            const width = 0xFFFF & lParam;
-            const height = 0xFFFF & lParam >> 16;
+        ui.WM_MOVE => {
+            const x = 0xFFFF & lParam;
+            const y = 0xFFFF & lParam >> 16;
             const hdc = gdi.GetDC(window);
             defer _ = gdi.ReleaseDC(window, hdc);
 
@@ -63,8 +63,8 @@ pub fn mainWindowCallback(
 
             const utf8 = std.fmt.allocPrint(
                 fba.allocator(),
-                "width: {}, height: {}",
-                .{ width, height },
+                "x: {}, y: {}",
+                .{ x, y },
             ) catch win32Panic();
             const T = std.unicode.utf8ToUtf16LeAllocZ;
             const utf16 = T(fba.allocator(), utf8) catch win32Panic();
@@ -134,12 +134,12 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![窗口大小改变事件][1]。
+![窗口移动事件][1]。
 
 ## 总结
 
-获取窗口大小改变事件，并将窗口大小打印到窗口中。
+获取窗口移动事件，并将坐标打印到窗口中。
 
-[1]: images/directx11.png
+[1]: images/directx12.png
 
 ## 附录
