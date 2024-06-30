@@ -156,7 +156,8 @@ pub fn wWinMain(h: H, _: ?H, _: [*:0]u16, _: u32) callconv(WINAPI) i32 {
         _ = gdi.MoveToEx(hdc, x1, y1, null);
         _ = gdi.LineTo(hdc, x2, y2);
 
-        while ((system.GetTickCount64() - startTime) < 33) {}
+        const ms = 33 -| (system.GetTickCount64() - startTime);
+        std.time.sleep(ms * std.time.ns_per_ms);
     }
 
     std.log.info("wWinMain end", .{});
