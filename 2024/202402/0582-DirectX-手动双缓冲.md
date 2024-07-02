@@ -34,12 +34,19 @@ const draw = win32.graphics.direct_draw;
 pub const UNICODE: bool = true;
 const WINAPI = std.os.windows.WINAPI;
 
+var allocator: std.mem.Allocator = undefined;
 var draw7: *draw.IDirectDraw7 = undefined;
 var surfaceDes: draw.DDSURFACEDESC2 = undefined;
 var surface: *draw.IDirectDrawSurface7 = undefined;
 
+var doubleBuffer: []u32 = undefined;
+
 const H = std.os.windows.HINSTANCE;
 pub fn wWinMain(h: H, _: ?H, _: [*:0]u16, _: u32) callconv(WINAPI) i32 {
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    allocator = gpa.allocator();
+
     zigwin.createWindow(h);
 
     gameInit();
@@ -71,10 +78,7 @@ fn gameInit() void {
     if (failed(draw7.IDirectDraw7_CreateSurface(&surfaceDes, //
         @ptrCast(&surface), null))) win32Panic();
 
-    var pixel = std.mem.zeroes(draw.DDPIXELFORMAT);
-    pixel.dwSize = @sizeOf(draw.DDPIXELFORMAT);
-    if (failed(surface.IDirectDrawSurface7_GetPixelFormat(&pixel)))
-        win32Panic();
+    doubleBuffer = allocator.alloc(u32, zigwin.WIDTH * zigwin.HEIGHT) catch unreachable;
 }
 
 fn gameUpdate() void {
@@ -82,21 +86,25 @@ fn gameUpdate() void {
     const system = win32.system.system_information;
     const start = system.GetTickCount64();
 
+    @memset(doubleBuffer, 0);
+
+    for (0..10000) |_| {
+        const color = zigwin.rand.uintAtMost(u24, std.math.maxInt(u24));
+        const x = zigwin.rand.uintLessThan(usize, zigwin.WIDTH);
+        const y = zigwin.rand.uintLessThan(usize, zigwin.HEIGHT);
+        const offset = x + y * zigwin.WIDTH;
+        doubleBuffer[offset] = color;
+    }
+
     surfaceDes = std.mem.zeroes(draw.DDSURFACEDESC2);
     surfaceDes.dwSize = @sizeOf(draw.DDSURFACEDESC2);
 
     if (failed(surface.IDirectDrawSurface7_Lock(null, &surfaceDes, //
         draw.DDLOCK_SURFACEMEMORYPTR | draw.DDLOCK_WAIT, null))) win32Panic();
 
-    const pitch32: usize = @intCast(surfaceDes.Anonymous1.lPitch >> 2);
-    const buffer: [*]u32 = @ptrCast(@alignCast(surfaceDes.lpSurface));
+    const primaryBuffer: [*]u32 = @ptrCast(@alignCast(surfaceDes.lpSurface));
 
-    for (0..zigwin.HEIGHT) |index| {
-        const color = 0x00FF0000;
-        const offset = index + index * pitch32;
-        buffer[offset] = color;
-    }
-
+    @memcpy(primaryBuffer, doubleBuffer);
     _ = surface.IDirectDrawSurface7_Unlock(null);
 
     // lock to 30 fps
@@ -108,6 +116,7 @@ fn gameShutdown() void {
     std.log.info("gameShutdown", .{});
     _ = surface.IUnknown_Release();
     _ = draw7.IUnknown_Release();
+    allocator.free(doubleBuffer);
 }
 
 fn win32Panic() noreturn {
