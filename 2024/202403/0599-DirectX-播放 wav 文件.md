@@ -111,7 +111,7 @@ fn initDirectSound() void {
     wavFormat.nBlockAlign = 1;
     wavFormat.nAvgBytesPerSec = wavFormat.nSamplesPerSec * wavFormat.nBlockAlign;
     wavFormat.wBitsPerSample = @intCast(decoder.bits());
-    wavFormat.cbSize = 4;
+    wavFormat.cbSize = 0;
 
     soundDesc.dwSize = @sizeOf(sound.DSBUFFERDESC);
     soundDesc.dwFlags = //
