@@ -305,6 +305,6 @@ fn makeMove(x: usize, y: usize) void {
 
 ![鼠标消息][1]。
 
-[1]: images/directx43.png
+[1]: images/directx44.png
 
 ## 附录

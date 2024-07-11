@@ -15,7 +15,7 @@
 
 ## 想法
 
-这游戏需要将所有灯关闭，还挺难的，我打不过。
+这游戏需要将所有灯关闭，还挺难的。后面还有一个生命游戏，之前写过网页版，不想写了。
 
 ## win.zig
 
@@ -201,6 +201,6 @@ fn makeMove(x: usize, y: usize) void {
 
 ![关灯游戏][1]。
 
-[1]: images/directx44.webp
+[1]: images/directx45.webp
 
 ## 附录
