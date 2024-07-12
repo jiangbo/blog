@@ -19,6 +19,10 @@
 
 ## win.zig
 
+无变化。
+
+## main.zig
+
 ```zig
 const std = @import("std");
 const win32 = @import("win32");
