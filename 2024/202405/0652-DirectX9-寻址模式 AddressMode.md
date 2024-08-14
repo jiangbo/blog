@@ -1,22 +1,23 @@
-# 0651-DirectX9-纹理图片映射
+# 0652-DirectX9-寻址模式 AddressMode
 
 ## 目标
 
-将图片映射到三角形组成的四边形纹理上。
+通过按键切换不同的 AddressMode。
 
 ## 环境
 
-- Time 2024-08-13
+- Time 2024-08-14
 - Zig 0.13.0-dev.351+64ef45eb0
 
 ## 参考
 
 1. 《DirectX 9.0 3D游戏开发编程基础》
 2. 书本配套代码：<https://d3dcoder.net/Data/Book1/BookICode.zip>
+3. <https://learn.microsoft.com/zh-cn/windows/uwp/graphics-concepts/texture-addressing-modes>
 
 ## 想法
 
-对于其中的光照的开启和关闭的逻辑，好像还不是很清楚。
+寻址模式之前已经了解过了，不算太难，看一下就懂，可以参考第三点参考链接。
 
 ## d3d.zig
 
@@ -24,15 +25,7 @@
 
 ## d3dx9.zig
 
-```zig
-...
-pub extern fn D3DXCreateTextureFromFileW(
-    device: *d3d9.IDirect3DDevice9,
-    name: LPCTSTR,
-    LPDIRECT3DTEXTURE9: ?**d3d9.IDirect3DTexture9,
-) callconv(std.os.windows.WINAPI) win32.foundation.HRESULT;
-...
-```
+无变化。
 
 ## main.zig
 
@@ -79,13 +72,13 @@ fn setup() bool {
     var data: [*]Vertex = undefined;
     _ = buffer.IDirect3DVertexBuffer9_Lock(0, 0, @ptrCast(&data), 0);
 
-    data[0] = .{ .x = -1, .y = -1, .z = 1.25, .nz = -1, .v = 1 };
+    data[0] = .{ .x = -1, .y = -1, .z = 1.25, .nz = -1, .v = 3 };
     data[1] = .{ .x = -1, .y = 1, .z = 1.25, .nz = -1 };
-    data[2] = .{ .x = 1, .y = 1, .z = 1.25, .nz = -1, .u = 1 };
+    data[2] = .{ .x = 1, .y = 1, .z = 1.25, .nz = -1, .u = 3 };
 
-    data[3] = .{ .x = -1, .y = -1, .z = 1.25, .nz = -1, .v = 1 };
-    data[4] = .{ .x = 1, .y = 1, .z = 1.25, .nz = -1, .u = 1 };
-    data[5] = .{ .x = 1, .y = -1, .z = 1.25, .nz = -1, .u = 1, .v = 1 };
+    data[3] = .{ .x = -1, .y = -1, .z = 1.25, .nz = -1, .v = 3 };
+    data[4] = .{ .x = 1, .y = 1, .z = 1.25, .nz = -1, .u = 3 };
+    data[5] = .{ .x = 1, .y = -1, .z = 1.25, .nz = -1, .u = 3, .v = 3 };
 
     _ = buffer.IDirect3DVertexBuffer9_Unlock();
 
@@ -111,6 +104,8 @@ fn setup() bool {
     _ = d3dx9.D3DXMatrixPerspectiveFovLH(&p, fov, w / h, 1.0, 1000.0);
     _ = device.IDirect3DDevice9_SetTransform(.PROJECTION, &p);
 
+    _ = device.IDirect3DDevice9_SetSamplerState(0, .BORDERCOLOR, 0x000000ff);
+
     return true;
 }
 
@@ -122,8 +117,27 @@ pub fn win32Panic() noreturn {
     d3d.win32Panic();
 }
 
+var samplerState: d3d9.D3DTEXTUREADDRESS = .WRAP;
+
 var y: f32 = 0.0;
 fn display(_: f32) bool {
+    const keyboard = win32.ui.input.keyboard_and_mouse;
+    // set wrap address mode
+    if (keyboard.GetAsyncKeyState('W') != 0) samplerState = .WRAP;
+
+    // set border color address mode
+    if (keyboard.GetAsyncKeyState('B') != 0) samplerState = .BORDER;
+
+    // set clamp address mode
+    if (keyboard.GetAsyncKeyState('C') != 0) samplerState = .CLAMP;
+
+    // set mirror address mode
+    if (keyboard.GetAsyncKeyState('M') != 0) samplerState = .MIRROR;
+
+    const state: u32 = @intCast(@intFromEnum(samplerState));
+    _ = device.IDirect3DDevice9_SetSamplerState(0, .ADDRESSU, state);
+    _ = device.IDirect3DDevice9_SetSamplerState(0, .ADDRESSV, state);
+
     const flags = win32.system.system_services.D3DCLEAR_TARGET |
         win32.system.system_services.D3DCLEAR_ZBUFFER;
 
@@ -157,8 +171,8 @@ pub fn main() void {
 
 ## 效果
 
-![纹理图片映射][1]。
+![寻址模式][1]。
 
-[1]: images/directx001.png
+[1]: images/directx002.webp
 
 ## 附录
