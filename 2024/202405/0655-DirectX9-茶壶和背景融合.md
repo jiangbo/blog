@@ -222,6 +222,6 @@ pub fn main() void {
 
 ![茶壶背景融合][1]。
 
-[1]: images/directx004.webp
+[1]: images/directx005.webp
 
 ## 附录
