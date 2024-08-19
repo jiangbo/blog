@@ -1,4 +1,4 @@
-# 0658-DirectX9-ID3DXFont 接口
+# 0660-DirectX9-ID3DXFont 接口
 
 ## 目标
 
@@ -139,6 +139,6 @@ pub fn main() void {
 
 ![D3DXFont 文字][1]。
 
-[1]: images/directx008.png
+[1]: images/directx010.png
 
 ## 附录
