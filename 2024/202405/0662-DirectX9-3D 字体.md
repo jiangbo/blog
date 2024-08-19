@@ -169,6 +169,6 @@ pub fn main() void {
 
 ![3D 字体][1]。
 
-[1]: images/directx012.png
+[1]: images/directx012.webp
 
 ## 附录
