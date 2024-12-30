@@ -1065,7 +1065,7 @@ pub fn main() void {
 
 ## 效果
 
-![雪花粒子效果][1]。
+![雪花粒子效果][1]
 
 [1]: images/directx015.webp
 

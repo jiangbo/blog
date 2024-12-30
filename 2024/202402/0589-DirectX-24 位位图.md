@@ -201,7 +201,7 @@ fn flipBitmap(image: []u32, height: usize) void {
 
 ## 效果
 
-![24 位位图][1]。
+![24 位位图][1]
 
 [1]: images/directx34.png
 

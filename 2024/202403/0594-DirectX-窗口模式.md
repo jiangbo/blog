@@ -96,7 +96,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![窗口模式][1]。
+![窗口模式][1]
 
 [1]: images/directx39.png
 

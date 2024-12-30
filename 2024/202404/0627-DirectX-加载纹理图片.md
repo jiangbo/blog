@@ -180,7 +180,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![纹理图片][1]。
+![纹理图片][1]
 
 [1]: images/directx61.webp
 

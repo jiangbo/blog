@@ -199,7 +199,7 @@ fn makeMove(x: usize, y: usize) void {
 
 ## 效果
 
-![关灯游戏][1]。
+![关灯游戏][1]
 
 [1]: images/directx45.webp
 

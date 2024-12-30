@@ -176,7 +176,7 @@ const Color = extern struct {
 
 ## 效果
 
-![模拟星空][1]。
+![模拟星空][1]
 
 ## 总结
 

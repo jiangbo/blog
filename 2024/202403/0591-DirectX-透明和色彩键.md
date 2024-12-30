@@ -311,7 +311,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![透明和色彩键][1]。
+![透明和色彩键][1]
 
 [1]: images/directx36.png
 

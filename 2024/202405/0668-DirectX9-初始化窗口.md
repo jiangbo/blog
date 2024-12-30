@@ -104,7 +104,7 @@ pub fn main() !void {
 
 ## 效果
 
-![初始化窗口][1]。
+![初始化窗口][1]
 
 [1]: images/directx018.png
 

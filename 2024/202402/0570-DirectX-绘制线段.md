@@ -151,7 +151,7 @@ const Color = extern struct {
 
 ## 效果
 
-![绘制线段][1]。
+![绘制线段][1]
 
 ## 总结
 

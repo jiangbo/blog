@@ -211,7 +211,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![DirectDraw 简单使用][1]。
+![DirectDraw 简单使用][1]
 
 ## 总结
 

@@ -181,7 +181,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![alpha 混合][1]。
+![alpha 混合][1]
 
 alpha 混合未能实现，alpha 通道被渲染成了黑色。
 

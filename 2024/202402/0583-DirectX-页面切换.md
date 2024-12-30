@@ -130,7 +130,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![页面切换][1]。
+![页面切换][1]
 
 [1]: images/directx29.png
 

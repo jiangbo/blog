@@ -277,7 +277,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![显示位图][1]。
+![显示位图][1]
 
 [1]: images/directx58.png
 

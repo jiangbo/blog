@@ -168,7 +168,7 @@ pub fn main() void {
 
 ## 效果
 
-![颜色三角形][1]。
+![颜色三角形][1]
 
 [1]: images/directx83.png
 

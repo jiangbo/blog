@@ -188,7 +188,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![点图元][1]。
+![点图元][1]
 
 [1]: images/directx46.png
 

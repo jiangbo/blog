@@ -175,7 +175,7 @@ pub fn main() !void {
 
 ## 效果
 
-![初始化][1]。
+![初始化][1]
 
 [1]: images/directx024.png
 

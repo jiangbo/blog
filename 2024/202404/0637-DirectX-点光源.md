@@ -248,7 +248,7 @@ fn changeLight() void {
 
 ## 效果
 
-![点光源][1]。
+![点光源][1]
 
 [1]: images/directx71.webp
 

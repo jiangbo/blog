@@ -131,7 +131,7 @@ fn paintHandle(allocator: std.mem.Allocator) !void {
 
 ## 效果
 
-![绘制次数][1]。
+![绘制次数][1]
 
 ## 总结
 

@@ -279,7 +279,7 @@ fn changeLight() void {
 
 ## 效果
 
-![放射光][1]。
+![放射光][1]
 
 [1]: images/directx77.webp
 

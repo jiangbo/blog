@@ -259,7 +259,7 @@ fn generateWindow() win32.foundation.HWND {
 
 ## 效果
 
-![绘制精灵][1]。
+![绘制精灵][1]
 
 [1]: images/directx027.png
 

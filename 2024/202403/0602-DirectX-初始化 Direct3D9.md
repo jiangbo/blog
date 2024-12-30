@@ -174,7 +174,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![初始化 D3D9][1]。
+![初始化 D3D9][1]
 
 [1]: images/directx42.png
 

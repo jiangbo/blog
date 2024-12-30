@@ -1212,7 +1212,7 @@ pub fn main() void {
 
 ## 效果
 
-![焰火粒子效果][1]。
+![焰火粒子效果][1]
 
 [1]: images/directx017.webp
 

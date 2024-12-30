@@ -659,7 +659,7 @@ fn raySphereIntTest(ray: *Ray, s: *BoundingSphere) bool {
 
 好像录制没有鼠标，不太看得出效果。
 
-![3D 中鼠标点击][1]。
+![3D 中鼠标点击][1]
 
 [1]: images/directx014.webp
 

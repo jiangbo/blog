@@ -271,7 +271,7 @@ fn changeLight() void {
 
 ## 效果
 
-![环境光二][1]。
+![环境光二][1]
 
 [1]: images/directx75.webp
 

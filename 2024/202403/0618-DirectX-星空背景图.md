@@ -215,7 +215,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![星空背景图][1]。
+![星空背景图][1]
 
 [1]: images/directx53.webp
 

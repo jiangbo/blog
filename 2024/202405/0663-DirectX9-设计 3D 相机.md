@@ -748,7 +748,7 @@ pub fn main() void {
 
 ## 效果
 
-![3D 相机][1]。
+![3D 相机][1]
 
 [1]: images/directx013.webp
 

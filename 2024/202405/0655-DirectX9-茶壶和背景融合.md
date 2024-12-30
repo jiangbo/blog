@@ -220,7 +220,7 @@ pub fn main() void {
 
 ## 效果
 
-![茶壶背景融合][1]。
+![茶壶背景融合][1]
 
 [1]: images/directx005.webp
 

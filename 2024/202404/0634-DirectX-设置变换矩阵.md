@@ -185,7 +185,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![设置变换矩阵][1]。
+![设置变换矩阵][1]
 
 [1]: images/directx68.png
 

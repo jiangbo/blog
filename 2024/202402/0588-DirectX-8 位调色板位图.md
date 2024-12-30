@@ -206,7 +206,7 @@ fn flipBitmap(image: []u32, height: usize) void {
 
 ## 效果
 
-![8 位调色板位图][1]。
+![8 位调色板位图][1]
 
 [1]: images/directx33.png
 

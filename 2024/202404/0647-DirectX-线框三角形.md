@@ -131,7 +131,7 @@ pub fn main() void {
 
 ## 效果
 
-![线框三角形][1]。
+![线框三角形][1]
 
 [1]: images/directx81.png
 

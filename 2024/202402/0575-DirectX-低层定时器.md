@@ -187,7 +187,7 @@ const Color = extern struct {
 
 ## 效果
 
-![底层定时][1]。
+![底层定时][1]
 
 ## 总结
 

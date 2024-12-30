@@ -347,7 +347,7 @@ pub fn main() void {
 
 ## 效果
 
-![阴影效果][1]。
+![阴影效果][1]
 
 [1]: images/directx008.webp
 

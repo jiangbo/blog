@@ -196,7 +196,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![三角形带图元][1]。
+![三角形带图元][1]
 
 [1]: images/directx50.webp
 

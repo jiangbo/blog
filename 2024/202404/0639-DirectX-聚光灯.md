@@ -259,7 +259,7 @@ fn changeLight() void {
 
 ## 效果
 
-![聚光灯][1]。
+![聚光灯][1]
 
 [1]: images/directx73.webp
 

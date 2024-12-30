@@ -133,7 +133,7 @@ fn generateWindow() win32.foundation.HWND {
 
 ## 效果
 
-![键盘输入][1]。
+![键盘输入][1]
 
 [1]: images/directx031.png
 

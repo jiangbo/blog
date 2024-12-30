@@ -160,7 +160,7 @@ pub extern fn D3DXLoadSurfaceFromFileW(
 
 ## 效果
 
-![了解表面][1]。
+![了解表面][1]
 
 [1]: images/directx020.png
 

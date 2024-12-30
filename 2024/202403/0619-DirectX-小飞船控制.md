@@ -391,7 +391,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![控制小飞船][1]。
+![控制小飞船][1]
 
 [1]: images/directx54.webp
 

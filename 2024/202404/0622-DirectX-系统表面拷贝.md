@@ -191,7 +191,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![系统表面拷贝][1]。
+![系统表面拷贝][1]
 
 [1]: images/directx57.png
 

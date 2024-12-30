@@ -276,7 +276,7 @@ fn changeLight() void {
 
 ## 效果
 
-![镜面反射光][1]。
+![镜面反射光][1]
 
 [1]: images/directx76.png
 

@@ -226,7 +226,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![alpha 混合][1]。
+![alpha 混合][1]
 
 [1]: images/directx67.webp
 

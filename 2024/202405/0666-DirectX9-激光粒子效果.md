@@ -509,7 +509,7 @@ pub fn main() void {
 
 ## 效果
 
-![激光粒子效果][1]。
+![激光粒子效果][1]
 
 [1]: images/directx016.webp
 

@@ -123,7 +123,7 @@ pub fn win32Panic() noreturn {
 
 ## 效果
 
-![实际客户区][1]。
+![实际客户区][1]
 
 [1]: images/directx41.png
 

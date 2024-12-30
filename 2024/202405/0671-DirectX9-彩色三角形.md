@@ -151,7 +151,7 @@ pub fn win32Check(result: win32.foundation.HRESULT) void {
 
 ## 效果
 
-![彩色三角形][1]。
+![彩色三角形][1]
 
 [1]: images/directx021.png
 

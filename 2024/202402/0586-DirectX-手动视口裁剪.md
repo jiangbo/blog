@@ -142,7 +142,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![手动视口裁剪][1]。
+![手动视口裁剪][1]
 
 [1]: images/directx32.png
 

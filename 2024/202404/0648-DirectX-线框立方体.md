@@ -303,7 +303,7 @@ pub fn main() void {
 
 ## 效果
 
-![线框立方体][1]。
+![线框立方体][1]
 
 [1]: images/directx82.webp
 

@@ -310,7 +310,7 @@ fn makeMove(x: u32, y: u32) void {
 
 ## 效果
 
-![图片关灯游戏][1]。
+![图片关灯游戏][1]
 
 [1]: images/directx59.webp
 

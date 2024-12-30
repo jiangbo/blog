@@ -204,7 +204,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![线图元][1]。
+![线图元][1]
 
 [1]: images/directx47.webp
 

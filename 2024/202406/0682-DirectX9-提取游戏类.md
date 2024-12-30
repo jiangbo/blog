@@ -150,7 +150,7 @@ fn generateWindow() win32.foundation.HWND {
 
 效果和上一节一样，没有变动逻辑。
 
-![提取游戏类][1]。
+![提取游戏类][1]
 
 [1]: images/directx027.png
 

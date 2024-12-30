@@ -137,7 +137,7 @@ pub fn main() void {
 
 ## 效果
 
-![D3DXFont 文字][1]。
+![D3DXFont 文字][1]
 
 [1]: images/directx010.png
 

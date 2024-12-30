@@ -221,7 +221,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![Z 缓冲][1]。
+![Z 缓冲][1]
 
 [1]: images/directx70.webp
 

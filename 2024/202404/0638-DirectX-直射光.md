@@ -283,7 +283,7 @@ fn changeLight() void {
 
 ## 效果
 
-![直射光源][1]。
+![直射光源][1]
 
 [1]: images/directx72.webp
 

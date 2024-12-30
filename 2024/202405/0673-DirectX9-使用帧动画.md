@@ -107,7 +107,7 @@ pub fn main() !void {
 
 ## 效果
 
-![帧动画][1]。
+![帧动画][1]
 
 [1]: images/directx023.webp
 

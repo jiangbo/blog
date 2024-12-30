@@ -157,7 +157,7 @@ pub fn main() void {
 
 ## 效果
 
-![纹理图片映射][1]。
+![纹理图片映射][1]
 
 [1]: images/directx001.png
 

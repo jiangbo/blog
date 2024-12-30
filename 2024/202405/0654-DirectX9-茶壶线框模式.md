@@ -167,7 +167,7 @@ pub fn main() void {
 
 ## 效果
 
-![茶壶线框模式][1]。
+![茶壶线框模式][1]
 
 [1]: images/directx004.webp
 

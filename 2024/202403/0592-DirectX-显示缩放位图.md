@@ -364,7 +364,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![位图缩放显示][1]。
+![位图缩放显示][1]
 
 [1]: images/directx37.png
 

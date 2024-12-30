@@ -207,7 +207,7 @@ pub fn main() void {
 
 ## 效果
 
-![初始化 Direct3D][1]。
+![初始化 Direct3D][1]
 
 [1]: images/directx80.png
 

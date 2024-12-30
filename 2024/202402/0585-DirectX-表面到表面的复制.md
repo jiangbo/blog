@@ -138,7 +138,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![blt 表面复制][1]。
+![blt 表面复制][1]
 
 [1]: images/directx31.png
 

@@ -161,7 +161,7 @@ fn generateWindow() win32.foundation.HWND {
 
 ## 效果
 
-![初始化 DirectX][1]。
+![初始化 DirectX][1]
 
 [1]: images/directx026.png
 

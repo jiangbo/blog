@@ -130,7 +130,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![GDI 和 DirectX][1]。
+![GDI 和 DirectX][1]
 
 [1]: images/directx38.png
 

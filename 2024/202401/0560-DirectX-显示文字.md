@@ -154,7 +154,7 @@ const Color = extern struct {
 
 ## 效果
 
-![显示文字][1]。
+![显示文字][1]
 
 ## 总结
 

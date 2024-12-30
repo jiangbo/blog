@@ -248,7 +248,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![缓冲三角形扇][1]。
+![缓冲三角形扇][1]
 
 [1]: images/directx55.webp
 

@@ -135,7 +135,7 @@ pub const Sprite = struct {
 
 ## 效果
 
-![更新精灵位置][1]。
+![更新精灵位置][1]
 
 [1]: images/directx028.webp
 

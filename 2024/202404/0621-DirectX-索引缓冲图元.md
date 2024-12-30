@@ -266,7 +266,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![索引缓冲图元][1]。
+![索引缓冲图元][1]
 
 [1]: images/directx56.webp
 

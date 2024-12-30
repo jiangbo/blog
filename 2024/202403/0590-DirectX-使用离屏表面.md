@@ -348,7 +348,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![背景表面][1]。
+![背景表面][1]
 
 [1]: images/directx35.png
 

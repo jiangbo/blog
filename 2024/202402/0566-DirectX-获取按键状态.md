@@ -156,7 +156,7 @@ pub fn keyUp(code: keyboard.VIRTUAL_KEY) bool {
 
 ## 效果
 
-![按键状态][1]。
+![按键状态][1]
 
 ## 总结
 

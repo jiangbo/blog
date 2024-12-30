@@ -120,7 +120,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![窗口中绘制像素][1]。
+![窗口中绘制像素][1]
 
 [1]: images/directx40.png
 

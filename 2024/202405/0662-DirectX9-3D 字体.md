@@ -167,7 +167,7 @@ pub fn main() void {
 
 ## 效果
 
-![3D 字体][1]。
+![3D 字体][1]
 
 [1]: images/directx012.webp
 

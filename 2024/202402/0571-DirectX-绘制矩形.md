@@ -154,7 +154,7 @@ const Color = extern struct {
 
 ## 效果
 
-![绘制矩形][1]。
+![绘制矩形][1]
 
 ## 总结
 

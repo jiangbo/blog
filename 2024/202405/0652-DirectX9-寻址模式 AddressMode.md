@@ -171,7 +171,7 @@ pub fn main() void {
 
 ## 效果
 
-![寻址模式][1]。
+![寻址模式][1]
 
 [1]: images/directx002.webp
 

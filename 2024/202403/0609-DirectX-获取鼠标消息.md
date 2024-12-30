@@ -303,7 +303,7 @@ fn makeMove(x: usize, y: usize) void {
 
 ## 效果
 
-![鼠标消息][1]。
+![鼠标消息][1]
 
 [1]: images/directx44.png
 

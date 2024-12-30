@@ -262,7 +262,7 @@ pub fn main() !void {
 
 ## 效果
 
-![纹理混合][1]。
+![纹理混合][1]
 
 [1]: images/directx022.png
 

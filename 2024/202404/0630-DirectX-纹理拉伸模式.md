@@ -186,7 +186,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![纹理拉伸][1]。
+![纹理拉伸][1]
 
 [1]: images/directx64.webp
 

@@ -189,7 +189,7 @@ pub fn main() void {
 
 ## 效果
 
-![金字塔光照][1]。
+![金字塔光照][1]
 
 [1]: images/directx84.webp
 

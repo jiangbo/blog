@@ -130,7 +130,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![鼠标图片][1]。
+![鼠标图片][1]
 
 [1]: images/directx60.png
 

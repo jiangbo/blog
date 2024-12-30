@@ -182,7 +182,7 @@ pub const Game = struct {
 
 ## 效果
 
-![计时器更新精灵][1]。
+![计时器更新精灵][1]
 
 [1]: images/directx030.webp
 

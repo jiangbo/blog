@@ -140,7 +140,7 @@ pub fn main() void {
 
 ## 效果
 
-![渲染 FPS][1]。
+![渲染 FPS][1]
 
 [1]: images/directx011.png
 

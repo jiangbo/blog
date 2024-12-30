@@ -141,7 +141,7 @@ fn charHandle(alloc: std.mem.Allocator, c: u8, s: isize) !void {
 
 ## 效果
 
-![键盘输入][1]。
+![键盘输入][1]
 
 ## 总结
 

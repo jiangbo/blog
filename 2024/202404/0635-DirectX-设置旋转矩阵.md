@@ -211,7 +211,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![设置旋转矩阵][1]。
+![设置旋转矩阵][1]
 
 [1]: images/directx69.webp
 

@@ -110,7 +110,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![blt 填充][1]。
+![blt 填充][1]
 
 [1]: images/directx30.png
 

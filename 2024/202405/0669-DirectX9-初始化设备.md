@@ -119,7 +119,7 @@ pub fn win32Check(result: win32.foundation.HRESULT) void {
 
 ## 效果
 
-![初始化设备][1]。
+![初始化设备][1]
 
 [1]: images/directx019.png
 

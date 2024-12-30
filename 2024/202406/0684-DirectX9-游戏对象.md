@@ -177,7 +177,7 @@ pub const Sprite = struct {
 
 ## 效果
 
-![游戏对象][1]。
+![游戏对象][1]
 
 [1]: images/directx029.webp
 

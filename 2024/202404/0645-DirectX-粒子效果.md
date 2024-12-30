@@ -186,7 +186,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![粒子效果][1]。
+![粒子效果][1]
 
 [1]: images/directx79.webp
 

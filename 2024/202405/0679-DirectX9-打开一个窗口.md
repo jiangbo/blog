@@ -89,7 +89,7 @@ pub fn win32Check(result: win32.foundation.HRESULT) void {
 
 ## 效果
 
-![Win32 窗口][1]。
+![Win32 窗口][1]
 
 [1]: images/directx025.png
 

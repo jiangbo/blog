@@ -191,7 +191,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![DirectDraw 16 位色彩][1]。
+![DirectDraw 16 位色彩][1]
 
 ## 总结
 

@@ -193,7 +193,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![索引线图元][1]。
+![索引线图元][1]
 
 [1]: images/directx52.webp
 

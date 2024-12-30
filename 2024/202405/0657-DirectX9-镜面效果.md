@@ -386,7 +386,7 @@ pub fn main() void {
 
 ## 效果
 
-![镜面效果][1]。
+![镜面效果][1]
 
 [1]: images/directx007.webp
 

@@ -186,7 +186,7 @@ fn win32Panic() noreturn {
 
 ## 效果
 
-![纹理采样][1]。
+![纹理采样][1]
 
 [1]: images/directx63.webp
 
