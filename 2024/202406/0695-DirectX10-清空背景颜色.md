@@ -1,12 +1,12 @@
-# 0694-DirectX10-创建交换链
+# 0695-DirectX10-清空背景颜色
 
 ## 目标
 
-创建交换链。
+使用固定的颜色，将窗口的背景颜色清空，相当于使用固定的颜色填充。
 
 ## 环境
 
-- Time 2025-01-04
+- Time 2025-01-05
 - Zig 0.14.0-dev.1911+3bf89f55c
 
 ## 参考
@@ -16,8 +16,7 @@
 
 ## 想法
 
-其中涉及到的概念，可以看龙书，这里就不介绍这些概念信息了。
-发现 build.zig 中加入的链接库好像没有用，后面去掉看看报错不。
+创建交换链的时候，将驱动类型设置成 NULL 了，导致一直不行，排查了很久。
 
 ## Graphics.zig
 
@@ -46,7 +45,7 @@ pub fn frame(self: *@This()) bool {
 }
 
 pub fn render(self: *@This()) bool {
-    self.direct3D.beginScene(0.5, 0.5, 0.5, 1.0);
+    self.direct3D.beginScene(1, 0, 1, 1);
     self.direct3D.endScene();
     return true;
 }
@@ -63,15 +62,19 @@ const std = @import("std");
 const win32 = @import("win32");
 
 const dxgi = win32.graphics.dxgi;
-const direct3d10 = win32.graphics.direct3d10;
+const d10 = win32.graphics.direct3d10;
 
-device: *direct3d10.ID3D10Device = undefined,
+device: *d10.ID3D10Device = undefined,
 swapChain: *dxgi.IDXGISwapChain = undefined,
+targetView: *d10.ID3D10RenderTargetView = undefined,
+depthStencilBuffer: *d10.ID3D10Texture2D = undefined,
+depthStencilState: *d10.ID3D10DepthStencilState = undefined,
+depthStencilView: *d10.ID3D10DepthStencilView = undefined,
 
-pub fn initialize(self: *@This(), width: u16, height: u16, window: ?win32.foundation.HWND) void {
+pub fn initialize(self: *@This(), w: u16, h: u16, window: ?win32.foundation.HWND) void {
     var desc = std.mem.zeroes(dxgi.DXGI_SWAP_CHAIN_DESC);
-    desc.BufferDesc.Width = width;
-    desc.BufferDesc.Height = height;
+    desc.BufferDesc.Width = w;
+    desc.BufferDesc.Height = h;
     desc.BufferDesc.RefreshRate = .{ .Numerator = 60, .Denominator = 1 };
     desc.BufferDesc.Format = .R8G8B8A8_UNORM;
 
@@ -80,25 +83,32 @@ pub fn initialize(self: *@This(), width: u16, height: u16, window: ?win32.founda
     desc.BufferCount = 1;
     desc.OutputWindow = window;
     desc.Windowed = win32.zig.TRUE;
-    desc.SwapEffect = .DISCARD;
 
-    win32Check(direct3d10.D3D10CreateDeviceAndSwapChain(null, .NULL, null, 0, //
-        direct3d10.D3D10_SDK_VERSION, &desc, @ptrCast(&self.swapChain), @ptrCast(&self.device)));
+    const flags: u16 = @intFromEnum(d10.D3D10_CREATE_DEVICE_DEBUG);
+    win32Check(d10.D3D10CreateDeviceAndSwapChain(null, .HARDWARE, null, flags, //
+        d10.D3D10_SDK_VERSION, &desc, @ptrCast(&self.swapChain), @ptrCast(&self.device)));
+
+    var back: *d10.ID3D10Texture2D = undefined;
+    win32Check(self.swapChain.GetBuffer(0, d10.IID_ID3D10Texture2D, @ptrCast(&back)));
+    defer _ = back.IUnknown.Release();
+
+    const target: *?*d10.ID3D10RenderTargetView = @ptrCast(&self.targetView);
+    win32Check(self.device.CreateRenderTargetView(@ptrCast(back), null, target));
+
+    self.device.OMSetRenderTargets(1, @ptrCast(&self.targetView), null);
 }
 
 pub fn beginScene(self: *@This(), red: f32, green: f32, blue: f32, alpha: f32) void {
-    _ = self;
-    _ = red;
-    _ = green;
-    _ = blue;
-    _ = alpha;
+    const color = [_]f32{ red, green, blue, alpha };
+    self.device.ClearRenderTargetView(self.targetView, @ptrCast(&color));
 }
 
 pub fn endScene(self: *@This()) void {
-    _ = self;
+    win32Check(self.swapChain.Present(1, 0));
 }
 
 pub fn shutdown(self: *@This()) void {
+    _ = self.targetView.IUnknown.Release();
     _ = self.swapChain.IUnknown.Release();
     _ = self.device.IUnknown.Release();
 }
@@ -108,5 +118,11 @@ fn win32Check(result: win32.foundation.HRESULT) void {
     @panic(@tagName(win32.foundation.GetLastError()));
 }
 ```
+
+## 效果
+
+![填充背景][1]
+
+[1]: images/directx037.png
 
 ## 附录
