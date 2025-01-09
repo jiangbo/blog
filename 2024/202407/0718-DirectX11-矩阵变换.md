@@ -1,8 +1,8 @@
-# 0717-DirectX11-引入数学库
+# 0718-DirectX11-矩阵变换
 
 ## 目标
 
-接下来就是 3D 变换的内容了，C++ 使用的扩展库，Zig 没有，找了一个数学库。
+使用矩阵来实现平移，旋转和缩放。
 
 ## 环境
 
@@ -17,66 +17,9 @@
 
 ## 想法
 
-引入的是 zmath 库，之前没有使用过，用一下看看怎么样。
-
-## build.zig.zon
-
-```zig
-.{
-    .name = "demo",
-    .version = "0.0.0",
-    .dependencies = .{
-        .zigwin32 = .{
-            .url = "git+https://github.com/marlersoft/zigwin32",
-            .hash = "1220adcf9ec0447c6a170ed069ed9d52c999b3dcae3557b3647878bf65ee59a2f5d0",
-        },
-        .zmath = .{
-            .url = "git+https://github.com/zig-gamedev/zmath",
-            .hash = "1220081d55b58b968d953db1afc2fb01b2f5733929144e69522461ce25fa6450d84e",
-        },
-    },
-
-    .paths = .{""},
-}
-```
-
-## build.zig
-
-```zig
-const std = @import("std");
-
-pub fn build(b: *std.Build) !void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-
-    const exe = b.addExecutable(.{
-        .name = "demo",
-        .root_source_file = b.path("src/main.zig"),
-        .target = target,
-        .optimize = optimize,
-    });
-
-    b.installArtifact(exe);
-
-    const win32 = b.dependency("zigwin32", .{});
-    exe.root_module.addImport("win32", win32.module("zigwin32"));
-
-    const zmath = b.dependency("zmath", .{});
-    exe.root_module.addImport("zm", zmath.module("root"));
-
-    const run_cmd = b.addRunArtifact(exe);
-    run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
-}
-```
+实现了平移，旋转和缩放，使用别人的库就是快，之前自己写过一点点，太麻烦了。
 
 ## Model.zig
-
-将偏移修改成了 Matrix 了。
 
 ```zig
 const std = @import("std");
@@ -218,7 +161,13 @@ pub fn render(self: *@This(), deviceContext: *d11.ID3D11DeviceContext) void {
 
     deviceContext.IASetIndexBuffer(self.indexBuffer.data, self.indexBuffer.format, 0);
 
-    const matrix: zm.Mat = zm.identity();
+    // 平移变换
+    const matrix: zm.Mat = zm.transpose(zm.translation(0.2, 0.2, 0));
+    // // 旋转变换
+    // const matrix: zm.Mat = zm.transpose(zm.rotationZ(std.math.pi));
+    // // 缩放变换
+    // const matrix: zm.Mat = zm.transpose(zm.scaling(0.5, 0.5, 1));
+
     deviceContext.UpdateSubresource(@ptrCast(self.matrixBuffer), 0, null, &matrix, 0, 0);
     deviceContext.VSSetConstantBuffers(0, 1, @ptrCast(&self.matrixBuffer));
 
@@ -239,39 +188,10 @@ fn win32Check(result: win32.foundation.HRESULT) void {
 }
 ```
 
-## vs.hlsl
-
-```hlsl
-cbuffer MatrixBuffer : register(b0)
-{
-    float4x4 mat;
-};
-
-struct VS_INPUT
-{
-    float3 inPos : POSITION;
-    float2 inTexCoord : TEXCOORD;
-};
-
-struct VS_OUTPUT
-{
-    float4 outPosition : SV_POSITION;
-    float2 outTexCoord : TEXCOORD;
-};
-
-VS_OUTPUT main(VS_INPUT input)
-{
-    VS_OUTPUT output;
-    output.outPosition = mul(float4(input.inPos, 1.0f), mat);
-    output.outTexCoord = input.inTexCoord;
-    return output;
-}
-```
-
 ## 效果
 
-![引入数学库][1]
+![矩阵变换][1]
 
-[1]: images/directx057.png
+[1]: images/directx058.png
 
 ## 附录
