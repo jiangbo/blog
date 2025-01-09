@@ -1,8 +1,8 @@
-# 0717-DirectX11-引入数学库
+# 0719-DirectX11-MVP 变换
 
 ## 目标
 
-接下来就是 3D 变换的内容了，C++ 使用的扩展库，Zig 没有，找了一个数学库。
+实现模型、视图、投影变换。
 
 ## 环境
 
@@ -17,66 +17,11 @@
 
 ## 想法
 
-引入的是 zmath 库，之前没有使用过，用一下看看怎么样。
-
-## build.zig.zon
-
-```zig
-.{
-    .name = "demo",
-    .version = "0.0.0",
-    .dependencies = .{
-        .zigwin32 = .{
-            .url = "git+https://github.com/marlersoft/zigwin32",
-            .hash = "1220adcf9ec0447c6a170ed069ed9d52c999b3dcae3557b3647878bf65ee59a2f5d0",
-        },
-        .zmath = .{
-            .url = "git+https://github.com/zig-gamedev/zmath#24cdd20f9da09bd1ce7b552907eeaba9bafea59d",
-            .hash = "1220081d55b58b968d953db1afc2fb01b2f5733929144e69522461ce25fa6450d84e",
-        },
-    },
-
-    .paths = .{""},
-}
-```
-
-## build.zig
-
-```zig
-const std = @import("std");
-
-pub fn build(b: *std.Build) !void {
-    const target = b.standardTargetOptions(.{});
-    const optimize = b.standardOptimizeOption(.{});
-
-    const exe = b.addExecutable(.{
-        .name = "demo",
-        .root_source_file = b.path("src/main.zig"),
-        .target = target,
-        .optimize = optimize,
-    });
-
-    b.installArtifact(exe);
-
-    const win32 = b.dependency("zigwin32", .{});
-    exe.root_module.addImport("win32", win32.module("zigwin32"));
-
-    const zmath = b.dependency("zmath", .{});
-    exe.root_module.addImport("zm", zmath.module("root"));
-
-    const run_cmd = b.addRunArtifact(exe);
-    run_cmd.step.dependOn(b.getInstallStep());
-    if (b.args) |args| {
-        run_cmd.addArgs(args);
-    }
-    const run_step = b.step("run", "Run the app");
-    run_step.dependOn(&run_cmd.step);
-}
-```
+有库使用就是好，方法直接调用就实现了，不用自己写数学计算函数。
 
 ## Model.zig
 
-将偏移修改成了 Matrix 了。
+宽和高是从方法调用传递下来的。
 
 ```zig
 const std = @import("std");
@@ -211,15 +156,32 @@ fn initTexture(self: *@This(), device: *d11.ID3D11Device) void {
     win32Check(device.CreateShaderResourceView(@ptrCast(texture), &srvDesc, &self.textureView));
 }
 
-pub fn render(self: *@This(), deviceContext: *d11.ID3D11DeviceContext) void {
+pub fn render(self: *@This(), deviceContext: *d11.ID3D11DeviceContext, width: u16, height: u16) void {
     const strides = [_]u32{self.vertexBuffer.stride};
     var buffers = [_]?*d11.ID3D11Buffer{self.vertexBuffer.data};
     deviceContext.IASetVertexBuffers(0, 1, &buffers, &strides, &.{0});
 
     deviceContext.IASetIndexBuffer(self.indexBuffer.data, self.indexBuffer.format, 0);
 
-    const matrix: zm.Mat = zm.identity();
-    deviceContext.UpdateSubresource(@ptrCast(self.matrixBuffer), 0, null, &matrix, 0, 0);
+    // 模型矩阵
+    const model = zm.identity();
+
+    // 视图矩阵
+    const eve = zm.f32x4(0, 0, -2, 0);
+    const look = zm.f32x4(0, 0, 0, 0);
+    const up = zm.f32x4(0, 1, 0, 0);
+    const view = zm.lookAtLh(eve, look, up);
+
+    // 投影矩阵
+    const fov = std.math.pi / 2.0;
+    const aspect = @as(f32, @floatFromInt(width)) / @as(f32, @floatFromInt(height));
+    const near = 0.1;
+    const far = 1000.0;
+    const projection = zm.perspectiveFovLh(fov, aspect, near, far);
+
+    const mvp: zm.Mat = zm.mul(zm.mul(model, view), projection);
+
+    deviceContext.UpdateSubresource(@ptrCast(self.matrixBuffer), 0, null, &mvp, 0, 0);
     deviceContext.VSSetConstantBuffers(0, 1, @ptrCast(&self.matrixBuffer));
 
     deviceContext.PSSetShaderResources(0, 1, @ptrCast(&self.textureView));
@@ -239,39 +201,10 @@ fn win32Check(result: win32.foundation.HRESULT) void {
 }
 ```
 
-## vs.hlsl
-
-```hlsl
-cbuffer MatrixBuffer : register(b0)
-{
-    float4x4 mat;
-};
-
-struct VS_INPUT
-{
-    float3 inPos : POSITION;
-    float2 inTexCoord : TEXCOORD;
-};
-
-struct VS_OUTPUT
-{
-    float4 outPosition : SV_POSITION;
-    float2 outTexCoord : TEXCOORD;
-};
-
-VS_OUTPUT main(VS_INPUT input)
-{
-    VS_OUTPUT output;
-    output.outPosition = mul(float4(input.inPos, 1.0f), mat);
-    output.outTexCoord = input.inTexCoord;
-    return output;
-}
-```
-
 ## 效果
 
-![引入数学库][1]
+![MVP 变换][1]
 
-[1]: images/directx057.png
+[1]: images/directx059.png
 
 ## 附录
