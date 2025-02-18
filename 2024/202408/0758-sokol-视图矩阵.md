@@ -91,6 +91,7 @@ export fn init() void {
     });
 }
 
+// DirectX 采用的左手坐标系
 const view = zm.lookAtLh(
     zm.f32x4(0, 0, -1, 0), // 眼睛所在位置
     zm.f32x4(0.0, 0.0, 0.0, 0), // 眼睛看向的位置
@@ -103,6 +104,7 @@ export fn frame() void {
     sk.gfx.applyPipeline(pipeline);
     sk.gfx.applyBindings(bind);
 
+    // zmath 采用的行向量，所以要转置
     const params = shd.VsParams{ .view = zm.transpose(view) };
     sk.gfx.applyUniforms(shd.UB_vs_params, sk.gfx.asRange(&params));
     sk.gfx.draw(0, 6, 1);
