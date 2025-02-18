@@ -12,7 +12,7 @@ zmath 是行向量，所以传递给 HLSL 着色器的时候，按道理应该�
 ## 参考
 
 1. <https://github.com/floooh/sokol-zig/tree/master/src/examples>
-<https://learn.microsoft.com/zh-cn/windows/win32/direct3dhlsl/dx-graphics-hlsl-mul>
+2. <https://learn.microsoft.com/zh-cn/windows/win32/direct3dhlsl/dx-graphics-hlsl-mul>
 
 ## 想法
 
