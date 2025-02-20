@@ -448,7 +448,7 @@ void main() {
 
 ## 效果
 
-![封装 sokol][1]
+![封装纹理缓存][1]
 
 [1]: images/sokol030.png
 
