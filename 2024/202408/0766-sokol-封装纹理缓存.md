@@ -1,12 +1,12 @@
-# 0765-sokol-封装 sokol
+# 0766-sokol-封装纹理缓存
 
 ## 目标
 
-将 sokol 的使用进行封装，按照 WebGPU 的封装格式来进行的。
+将图片加载为纹理进行封装，新增一个缓存，如果加载过就不加载了。
 
 ## 环境
 
-- Time 2025-02-19
+- Time 2025-02-20
 - Zig 0.14.0-dev.2851+b074fb7dd
 
 ## 参考
@@ -15,8 +15,62 @@
 
 ## 想法
 
-WebGPU 应该算一个现代图形 API 的抽象层，按照 WebGPU 的使用方式封装了一下。
-当前应该还不算封装，只是将 sokol 隐藏到了 graphics 的里面，后面边写边修改。
+新增了一个 cache 缓存模块，用来缓存一些加载消耗时间的资源。
+
+## cache.zig
+
+```zig
+const std = @import("std");
+const gfx = @import("graphics.zig");
+
+var allocator: std.mem.Allocator = undefined;
+
+pub fn init(alloc: std.mem.Allocator) void {
+    allocator = alloc;
+    TextureCache.init();
+}
+
+pub fn deinit() void {
+    TextureCache.deinit();
+}
+
+pub const TextureCache = struct {
+    const stbi = @import("stbi");
+    const Cache = std.StringHashMap(gfx.Texture);
+
+    var cache: Cache = undefined;
+
+    pub fn init() void {
+        cache = Cache.init(allocator);
+        stbi.init(allocator);
+    }
+
+    pub fn get(path: [:0]const u8) ?gfx.Texture {
+        const entry = cache.getOrPut(path) catch |e| {
+            std.log.err("texture cache allocate error: {}", .{e});
+            return null;
+        };
+        if (entry.found_existing) return entry.value_ptr.*;
+
+        std.log.info("loading texture from: {s}", .{path});
+        var image = stbi.Image.loadFromFile(path, 4) catch |e| {
+            std.log.err("loading image error: {}", .{e});
+            return null;
+        };
+
+        defer image.deinit();
+
+        const texture = gfx.Texture.init(image.width, image.height, image.data);
+        entry.value_ptr.* = texture;
+        return texture;
+    }
+
+    pub fn deinit() void {
+        stbi.deinit();
+        cache.deinit();
+    }
+};
+```
 
 ## graphics.zig
 
@@ -49,6 +103,35 @@ pub const Camera = struct {
 
 pub const BatchInstance = shd.Batchinstance;
 pub const UniformParams = shd.VsParams;
+pub const Image = sk.gfx.Image;
+pub const Texture = struct {
+    x: f32 = 0,
+    y: f32 = 0,
+    width: f32,
+    height: f32,
+    value: sk.gfx.Image,
+
+    pub fn init(width: u32, height: u32, data: []u8) Texture {
+        const image = sk.gfx.allocImage();
+
+        sk.gfx.initImage(image, .{
+            .width = @as(i32, @intCast(width)),
+            .height = @as(i32, @intCast(height)),
+            .pixel_format = .RGBA8,
+            .data = init: {
+                var imageData = sk.gfx.ImageData{};
+                imageData.subimage[0][0] = sk.gfx.asRange(data);
+                break :init imageData;
+            },
+        });
+
+        return .{
+            .width = @floatFromInt(width),
+            .height = @floatFromInt(height),
+            .value = image,
+        };
+    }
+};
 
 pub const Color = sk.gfx.Color;
 pub const Buffer = sk.gfx.Buffer;
@@ -57,20 +140,8 @@ pub const BindGroup = struct {
     value: sk.gfx.Bindings = .{},
     uniform: shd.VsParams = undefined,
 
-    pub fn bindImage(self: *BindGroup, width: u32, height: u32, data: []u8) void {
-        self.value.images[shd.IMG_tex] = sk.gfx.allocImage();
-
-        sk.gfx.initImage(self.value.images[shd.IMG_tex], .{
-            .width = @as(i32, @intCast(width)),
-            .height = @as(i32, @intCast(height)),
-            .pixel_format = .RGBA8,
-            .data = init: {
-                var image = sk.gfx.ImageData{};
-                image.subimage[0][0] = sk.gfx.asRange(data);
-                break :init image;
-            },
-        });
-
+    pub fn bindTexture(self: *BindGroup, texture: Texture) void {
+        self.value.images[shd.IMG_tex] = texture.value;
         self.value.samplers[shd.SMP_smp] = sk.gfx.makeSampler(.{
             .min_filter = .LINEAR,
             .mag_filter = .LINEAR,
@@ -97,22 +168,16 @@ pub const BindGroup = struct {
     }
 };
 
-pub const CommandEncoder = struct {
-    pub fn beginRenderPass(self: *CommandEncoder, color: Color) RenderPass {
-        _ = self;
+pub const CommandEncoder = struct {};
+
+pub const RenderPass = struct {
+    pub fn begin(color: Color) RenderPass {
         var action = sk.gfx.PassAction{};
         action.colors[0] = .{ .clear_value = color };
         sk.gfx.beginPass(.{ .action = action, .swapchain = sk.glue.swapchain() });
         return RenderPass{};
     }
 
-    pub fn finish(self: *CommandEncoder) void {
-        _ = self;
-        sk.gfx.commit();
-    }
-};
-
-pub const RenderPass = struct {
     pub fn setPipeline(self: *RenderPass, pipeline: RenderPipeline) void {
         _ = self;
         sk.gfx.applyPipeline(pipeline.value);
@@ -121,8 +186,8 @@ pub const RenderPass = struct {
     pub fn setBindGroup(self: *RenderPass, index: u32, group: BindGroup) void {
         _ = self;
         _ = index;
-        sk.gfx.applyBindings(group.value);
         sk.gfx.applyUniforms(shd.UB_vs_params, sk.gfx.asRange(&group.uniform));
+        sk.gfx.applyBindings(group.value);
     }
 
     pub fn draw(self: *RenderPass, number: u32) void {
@@ -133,6 +198,7 @@ pub const RenderPass = struct {
     pub fn end(self: *RenderPass) void {
         _ = self;
         sk.gfx.endPass();
+        sk.gfx.commit();
     }
 };
 
@@ -175,6 +241,7 @@ pub fn run(info: RunInfo) void {
         .window_title = info.title,
         .logger = .{ .func = sk.log.func },
         .win32_console_attach = true,
+        .high_dpi = true,
         .init_cb = init,
         .event_cb = event,
         .frame_cb = frame,
@@ -208,22 +275,18 @@ export fn cleanup() void {
 
 ```zig
 const std = @import("std");
-const stbi = @import("stbi");
 const gfx = @import("graphics.zig");
+const cache = @import("cache.zig");
 
 var bind: gfx.BindGroup = .{};
 
-var imageWidth: f32 = 0;
-var imageHeight: f32 = 0;
-const NUMBER = 10000;
+const NUMBER = 1;
 
 fn init() void {
-    var image = stbi.Image.loadFromFile("assets/player.bmp", 4) catch unreachable;
-    defer image.deinit();
-    imageWidth = @floatFromInt(image.width);
-    imageHeight = @floatFromInt(image.height);
+    cache.init(allocator);
 
-    bind.bindImage(image.width, image.height, image.data);
+    const texture = cache.TextureCache.get("assets/player.bmp").?;
+    bind.bindTexture(texture);
 
     storageBuffer = allocator.alloc(gfx.BatchInstance, NUMBER) catch unreachable;
     bind.bindStorageBuffer(0, storageBuffer);
@@ -247,16 +310,14 @@ fn fillVertex(idx: usize, x: f32, y: f32, w: f32, h: f32) void {
 }
 
 fn frame() void {
-    var encoder = gfx.CommandEncoder{};
-    defer encoder.finish();
-
-    var renderPass = encoder.beginRenderPass(.{ .r = 1, .b = 1, .a = 1 });
+    var renderPass = gfx.RenderPass.begin(.{ .r = 1, .b = 1, .a = 1 });
     defer renderPass.end();
 
+    const texture = cache.TextureCache.get("assets/player.bmp").?;
     for (0..NUMBER) |i| {
-        const x = rand.float(f32) * width;
-        const y = rand.float(f32) * height;
-        fillVertex(i, x, y, imageWidth, imageHeight);
+        const x = rand.float(f32) * width * 0;
+        const y = rand.float(f32) * height * 0;
+        fillVertex(i, x, y, texture.width, texture.height);
     }
 
     bind.updateStorageBuffer(0, storageBuffer);
@@ -272,6 +333,7 @@ fn event(evt: ?*const gfx.Event) void {
 
 fn deinit() void {
     allocator.free(storageBuffer);
+    cache.deinit();
 }
 
 const width = 640;
@@ -283,8 +345,6 @@ pub fn main() void {
     var gpa = std.heap.GeneralPurposeAllocator(.{}){};
     defer _ = gpa.deinit();
     allocator = gpa.allocator();
-    stbi.init(gpa.allocator());
-    defer stbi.deinit();
 
     var prng = std.Random.DefaultPrng.init(@intCast(std.time.timestamp()));
     rand = prng.random();
@@ -390,6 +450,6 @@ void main() {
 
 ![封装 sokol][1]
 
-[1]: images/sokol029.webp
+[1]: images/sokol030.png
 
 ## 附录
