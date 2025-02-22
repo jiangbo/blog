@@ -1,8 +1,8 @@
-# 0775-sokol-实现帧动画
+# 0776-sokol-实现角色朝向
 
 ## 目标
 
-之前的动画是基于帧数的，现在实现的帧动画是基于时间。
+根据按键的左右，来实现游戏角色的面向。
 
 ## 环境
 
@@ -16,67 +16,7 @@
 
 ## 想法
 
-基于时间的帧动画，不管帧率高和低，看到的效果应该都是一样的。
-
-## window.zig
-
-新增了一个方法来获取每帧的间隔时间。
-
-```zig
-const std = @import("std");
-const sk = @import("sokol");
-
-const context = @import("context.zig");
-
-pub const Event = sk.app.Event;
-pub const RunInfo = struct {
-    init: *const fn () void,
-    frame: *const fn () void,
-    event: *const fn (?*const Event) void,
-    deinit: *const fn () void,
-};
-
-pub fn deltaMillisecond() f32 {
-    return @floatCast(sk.app.frameDuration() * 1000);
-}
-
-var runInfo: RunInfo = undefined;
-pub fn run(info: RunInfo) void {
-    runInfo = info;
-    sk.app.run(.{
-        .width = @as(i32, @intFromFloat(context.width)),
-        .height = @as(i32, @intFromFloat(context.height)),
-        .window_title = context.title,
-        .logger = .{ .func = sk.log.func },
-        .win32_console_attach = true,
-        .init_cb = init,
-        .event_cb = event,
-        .frame_cb = frame,
-        .cleanup_cb = cleanup,
-    });
-}
-
-export fn init() void {
-    sk.gfx.setup(.{
-        .environment = sk.glue.environment(),
-        .logger = .{ .func = sk.log.func },
-    });
-    runInfo.init();
-}
-
-export fn event(evt: ?*const Event) void {
-    runInfo.event(evt);
-}
-
-export fn frame() void {
-    runInfo.frame();
-}
-
-export fn cleanup() void {
-    sk.gfx.shutdown();
-    runInfo.deinit();
-}
-```
+将状态信息都放到了一个 Player 的结构体中。
 
 ## animation.zig
 
@@ -116,12 +56,15 @@ pub const FrameAnimation = struct {
         return self;
     }
 
-    pub fn currentOrNext(self: *FrameAnimation, delta: f32) gfx.Texture {
+    pub fn play(self: *FrameAnimation, delta: f32) void {
         self.timer += delta;
         if (self.timer >= self.interval) {
             self.current = (self.current + 1) % self.count;
             self.timer = 0;
         }
+    }
+
+    pub fn currentTexture(self: FrameAnimation) gfx.Texture {
         return self.frames[self.current];
     }
 };
@@ -137,11 +80,53 @@ const context = @import("context.zig");
 const window = @import("window.zig");
 const animation = @import("animation.zig");
 
-const playerAnimationNumber = 6;
-
 var background: gfx.Texture = undefined;
-var playerLeft: animation.FrameAnimation = undefined;
-var playerRight: animation.FrameAnimation = undefined;
+
+const Player = struct {
+    x: f32 = 500,
+    y: f32 = 500,
+    speed: f32 = 3,
+    faceLeft: bool = true,
+    leftAnimation: animation.FrameAnimation,
+    rightAnimation: animation.FrameAnimation,
+    moveUp: bool = false,
+    moveDown: bool = false,
+    moveLeft: bool = false,
+    moveRight: bool = false,
+
+    pub fn init() Player {
+        const leftFmt: []const u8 = "assets/img/player_left_{}.png";
+        const left = animation.FrameAnimation.load(leftFmt, 6, 50).?;
+
+        const rightFmt = "assets/img/player_right_{}.png";
+        const right = animation.FrameAnimation.load(rightFmt, 6, 50).?;
+
+        return .{ .leftAnimation = left, .rightAnimation = right };
+    }
+
+    pub fn update(self: *Player, delta: f32) void {
+        if (self.moveUp) self.y -= self.speed;
+        if (self.moveDown) self.y += self.speed;
+        if (self.moveLeft) self.x -= self.speed;
+        if (self.moveRight) self.x += self.speed;
+
+        if (self.moveLeft) self.faceLeft = true;
+        if (self.moveRight) self.faceLeft = false;
+
+        if (self.faceLeft)
+            self.leftAnimation.play(delta)
+        else
+            self.rightAnimation.play(delta);
+    }
+
+    pub fn currentTexture(self: Player) gfx.Texture {
+        if (self.faceLeft) {
+            return self.leftAnimation.currentTexture();
+        } else {
+            return self.rightAnimation.currentTexture();
+        }
+    }
+};
 
 fn init() void {
     const allocator = context.allocator;
@@ -156,23 +141,14 @@ fn init() void {
     background = cache.TextureCache.load("assets/img/background.png").?;
 
     // 加载角色
-    const leftFmt: []const u8 = "assets/img/player_left_{}.png";
-    playerLeft = animation.FrameAnimation.load(leftFmt, 6, 50).?;
-
-    const rightFmt = "assets/img/player_right_{}.png";
-    playerRight = animation.FrameAnimation.load(rightFmt, 6, 50).?;
+    player = Player.init();
 }
 
-const Vector2 = struct { x: f32 = 0, y: f32 = 0 };
-
-var playerPosition: Vector2 = .{ .x = 500, .y = 500 }; // 角色初始位置
-const playerSpeed: f32 = 3; // 角色移动速度
+var player: Player = undefined;
 
 fn frame() void {
-    if (moveUp) playerPosition.y -= playerSpeed;
-    if (moveDown) playerPosition.y += playerSpeed;
-    if (moveLeft) playerPosition.x -= playerSpeed;
-    if (moveRight) playerPosition.x += playerSpeed;
+    const delta = window.deltaMillisecond();
+    player.update(delta);
 
     var renderPass = gfx.CommandEncoder.beginRenderPass(context.clearColor);
     defer renderPass.submit();
@@ -180,32 +156,25 @@ fn frame() void {
     var single = gfx.TextureSingle.begin(renderPass);
 
     single.draw(0, 0, background);
-
-    const delta = window.deltaMillisecond();
-    single.draw(playerPosition.x, playerPosition.y, playerRight.currentOrNext(delta));
+    single.draw(player.x, player.y, player.currentTexture());
 
     // var batch = gfx.TextureBatch.begin(renderPass, playerLeft[playerAnimationIndex]);
     // batch.draw(0, 0);
     // batch.end();
 }
 
-var moveUp: bool = false;
-var moveDown: bool = false;
-var moveLeft: bool = false;
-var moveRight: bool = false;
-
 fn event(evt: ?*const window.Event) void {
     if (evt) |e| if (e.type == .KEY_DOWN) switch (e.key_code) {
-        .W => moveUp = true,
-        .S => moveDown = true,
-        .A => moveLeft = true,
-        .D => moveRight = true,
+        .W => player.moveUp = true,
+        .S => player.moveDown = true,
+        .A => player.moveLeft = true,
+        .D => player.moveRight = true,
         else => {},
     } else if (e.type == .KEY_UP) switch (e.key_code) {
-        .W => moveUp = false,
-        .S => moveDown = false,
-        .A => moveLeft = false,
-        .D => moveRight = false,
+        .W => player.moveUp = false,
+        .S => player.moveDown = false,
+        .A => player.moveLeft = false,
+        .D => player.moveRight = false,
         else => {},
     };
 }
@@ -231,8 +200,8 @@ pub fn main() void {
 
 ## 效果
 
-![帧动画][1]
+![实现角色朝向][1]
 
-[1]: images/sokol038.webp
+[1]: images/sokol039.webp
 
 ## 附录
