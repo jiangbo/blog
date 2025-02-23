@@ -76,12 +76,8 @@ fn init() void {
     player = Player.init();
 
     enemies = std.ArrayList(Enemy).init(allocator);
-
-    // 加载敌人
-    for (0..10) |index| {
-        enemies.append(Enemy.init()) catch unreachable;
-        initEnemyPosition(&enemies.items[index]);
-    }
+    // 加载敌人动画资源
+    _ = Enemy.init();
 }
 
 const Direction = enum { left, right, up, down };
@@ -165,9 +161,22 @@ const Enemy = struct {
 var player: Player = undefined;
 var enemies: std.ArrayList(Enemy) = undefined;
 
+const enemyGenerateInterval: f32 = 2000;
+
+var enemyGenerateTimer: f32 = 0;
+fn tryGenerateEnemy() void {
+    enemyGenerateTimer += window.deltaMillisecond();
+    if (enemyGenerateTimer >= enemyGenerateInterval) {
+        enemyGenerateTimer = 0;
+        enemies.append(Enemy.init()) catch unreachable;
+        initEnemyPosition(&enemies.items[enemies.items.len - 1]);
+    }
+}
+
 fn frame() void {
     const delta = window.deltaMillisecond();
     player.update(delta);
+    tryGenerateEnemy();
     for (enemies.items) |*enemy| {
         enemy.update(delta);
     }
