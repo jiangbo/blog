@@ -42,7 +42,7 @@ pub fn deltaMillisecond() f32 {
 }
 
 pub fn totalMillisecond() f32 {
-    return @floatFromInt(sk.app.frameCount());
+    return deltaTime;
 }
 
 pub fn exit() void {
