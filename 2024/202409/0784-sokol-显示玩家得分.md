@@ -86,11 +86,6 @@ export fn init() void {
         .fonts = init: {
             var f: [8]sk.debugtext.FontDesc = @splat(.{});
             f[0] = sk.debugtext.fontKc853();
-            f[1] = sk.debugtext.fontKc854();
-            f[2] = sk.debugtext.fontZ1013();
-            f[3] = sk.debugtext.fontCpc();
-            f[4] = sk.debugtext.fontC64();
-            f[5] = sk.debugtext.fontOric();
             break :init f;
         },
         .logger = .{ .func = sk.log.func },
