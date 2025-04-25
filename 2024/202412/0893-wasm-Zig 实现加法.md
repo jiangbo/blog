@@ -52,7 +52,10 @@ pub fn build(b: *std.Build) void {
 ## main.zig
 
 ```zig
+extern fn print(a: i32) void;
+
 export fn add(a: i32, b: i32) i32 {
+    print(a + b);
     return a + b;
 }
 ```
@@ -82,7 +85,11 @@ zig build -Dtarget=wasm32-freestanding --release=small
 
     <script type="text/javascript">
 
-        WebAssembly.instantiateStreaming(fetch("demo.wasm")).then(result => {
+        WebAssembly.instantiateStreaming(fetch("demo.wasm"), {
+            env: {
+                print: (x) => console.log(x)
+            }
+        }).then(result => {
             const add = result.instance.exports.add;
             document.getElementById('result').innerText = add(2, 2);
         });
@@ -99,3 +106,29 @@ zig build -Dtarget=wasm32-freestanding --release=small
 [1]: images/wasm08.png
 
 ## 附录
+
+### wasm2wat
+
+导出了一块内存，大小是 1M，原因可以看这里：
+
+1. <https://ziggit.dev/t/using-zig-with-webassembly/3478>
+2. <https://github.com/WebAssembly/tool-conventions/blob/4dd47d204df0c789c23d246bc4496631b5c199c4/DynamicLinking.md?plain=1#L136>
+
+```pwsh
+PS C:\workspace\wasm> wasm2wat .\zig-out\bin\demo.wasm
+(module
+  (type (;0;) (func (param i32)))
+  (type (;1;) (func (param i32 i32) (result i32)))
+  (import "env" "print" (func (;0;) (type 0)))
+  (func (;1;) (type 1) (param i32 i32) (result i32)
+    local.get 1
+    local.get 0
+    i32.add
+    local.tee 0
+    call 0
+    local.get 0)
+  (memory (;0;) 16)
+  (global (;0;) (mut i32) (i32.const 1048576))
+  (export "memory" (memory 0))
+  (export "add" (func 1)))
+```
