@@ -98,7 +98,7 @@ zig build -Dtarget=wasm32-freestanding --release=small
 
 ![字符串][1]
 
-[1]: images/wasm08.png
+[1]: images/wasm09.png
 
 ## 附录
 
