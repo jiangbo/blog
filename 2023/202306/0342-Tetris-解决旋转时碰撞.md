@@ -44,7 +44,7 @@
 
 如果旋转后有碰撞，则将其还原，相当于如果有碰撞，则不能进行旋转。
 
-[1]: images/many-block.gif
+[1]: images/rotate-block.gif
 
 ## 附录
 
