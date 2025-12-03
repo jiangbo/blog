@@ -147,7 +147,7 @@ pub fn main() !void {
 
 ## 总结
 
-从纹理中获得图片。
+实现了粒子混合。
 
 [1]: images/raylib-texture-particles.png
 
