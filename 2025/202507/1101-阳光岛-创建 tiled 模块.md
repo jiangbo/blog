@@ -103,7 +103,7 @@ pub fn draw() void {
 
 和之前一样的效果，只是用了 tiled 模块来加载地图数据。
 
-![开篇][1]
+![创建 tiled 模块][1]
 
 [1]: images/阳光岛01.png
 
