@@ -141,6 +141,6 @@ pub fn main() void {
 
 使用 Zig 语言，引入 raylib 库，实现了显示一个图形窗口。
 
-[1]: images/raylib-hello.png
+[1]: images/raylib-screen.png
 
 ## 附录
